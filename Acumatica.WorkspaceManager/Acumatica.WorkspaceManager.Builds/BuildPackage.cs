@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Acumatica.WorkspaceManager.Builds
             int majorVersion = 0;
             int minorVersion = 0;
             int buildNumber = 0;
-
+            
             var keyParts = key.Split('/');
             if (keyParts.Length > 2)
             {
@@ -42,12 +43,27 @@ namespace Acumatica.WorkspaceManager.Builds
             this.MinorVersion = minorVersion;
             this.BuildNumber = buildNumber;
             this.Key = key;
+
+            this.IsRemote = false;
+            this.IsLocal = false;
         }
 
         public int MajorVersion { get; }
         public int MinorVersion { get; }
         public int BuildNumber { get; }
+        public bool IsRemote { get; private set; }
+        public bool IsLocal { get; private set; }
 
         public string Key { get; }
+
+        public void SetIsRemote()
+        {
+            this.IsRemote = true;
+        }
+
+        public void SetIsLocal()
+        {
+            this.IsLocal = true;
+        }
     }
 }

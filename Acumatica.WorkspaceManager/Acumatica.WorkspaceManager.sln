@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acumatica.WorkspaceManager"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acumatica.WorkspaceManager.Builds", "Acumatica.WorkspaceManager.Builds\Acumatica.WorkspaceManager.Builds.csproj", "{CA7B52AF-CDCF-4C79-9FD3-EBCBC9A32849}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acumatica.WorkspaceManager.Tests", "Acumatica.WorkspaceManager.Tests\Acumatica.WorkspaceManager.Tests.csproj", "{2F11F4AF-B539-4627-8802-18E8D5DBFC86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acumatica.WorkspaceManager.Install", "Acumatica.WorkspaceManager.Install\Acumatica.WorkspaceManager.Install.csproj", "{9C6E0AB6-612B-4256-8D57-F083FF78ED8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{CA7B52AF-CDCF-4C79-9FD3-EBCBC9A32849}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA7B52AF-CDCF-4C79-9FD3-EBCBC9A32849}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA7B52AF-CDCF-4C79-9FD3-EBCBC9A32849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F11F4AF-B539-4627-8802-18E8D5DBFC86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F11F4AF-B539-4627-8802-18E8D5DBFC86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F11F4AF-B539-4627-8802-18E8D5DBFC86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F11F4AF-B539-4627-8802-18E8D5DBFC86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C6E0AB6-612B-4256-8D57-F083FF78ED8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C6E0AB6-612B-4256-8D57-F083FF78ED8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C6E0AB6-612B-4256-8D57-F083FF78ED8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C6E0AB6-612B-4256-8D57-F083FF78ED8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

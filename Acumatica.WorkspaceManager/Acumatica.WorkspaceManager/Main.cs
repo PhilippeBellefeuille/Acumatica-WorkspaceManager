@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Acumatica.WorkspaceManager.Install;
+using Acumatica.WorkspaceManager.Builds;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,6 +23,28 @@ namespace Acumatica.WorkspaceManager
         {
             foreach (var build in Builds.BuildManager.GetBuildPackages())
                 this.buildPackageBindingSource.Add(build);
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            var dataGridView = (DataGridView)sender;
+        }
+
+        private void buildPackageBindingSource_CurrentChanged(object sender, EventArgs e)
+        {
+            var bindingSource = (BindingSource)sender;
+            var row = (BuildPackage)bindingSource.Current;
+
+            this.button1.Enabled = row.IsLocal;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var currentBuildPackage = (BuildPackage)this.buildPackageBindingSource.Current;
+            
+            InstallManager.InstallAcumatica(currentBuildPackage, () => {
+                var yolo = "yolo";
+            });
         }
     }
 }
