@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -14,7 +15,6 @@ namespace Acumatica.WorkspaceManager
 {
     public partial class Main : Form
     {
-        private IEnumerable<BuildPackage> buildPackages;
         private string versionMask;
 
         public Main()
@@ -61,7 +61,7 @@ namespace Acumatica.WorkspaceManager
                             ExecuteCommand(sender, buildPackage);
                             PXWait.StopWait();
 
-                            BuildPackageDataGridView.Update();
+                            //BuildPackageDataGridView.Update();
                             EnableControls(buildPackage);
                         });
                     })).Start();
@@ -77,15 +77,33 @@ namespace Acumatica.WorkspaceManager
                 }
             }
         }
-
+        
         private void Main_Load(object sender, EventArgs e)
         {
-            ReloadBuildPackage(true);
+            ReloadBuildPackage();
         }
 
         private void ReloadDataEventHandler(object sender, EventArgs e)
         {
-            ReloadBuildPackage(sender != VersionMaskedTextBox);
+            if (sender == ReloadButton)
+            {
+                ReloadBuildPackage();
+            }
+            else if ((sender == VersionMaskedTextBox && versionMask != VersionMaskedTextBox.Text) ||
+                     sender == ShowRemoteCheckBox ||
+                     sender == ShowLocalCheckBox ||
+                     sender == ShowInstalledCheckBox)
+            {
+                FilterBuildPackages();
+            }
+        }
+
+        private void VersionMaskedTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && versionMask != VersionMaskedTextBox.Text)
+            {
+                FilterBuildPackages();
+            }
         }
         #endregion
 
@@ -93,20 +111,48 @@ namespace Acumatica.WorkspaceManager
         private void ExecuteCommand(object sender, BuildPackage buildPackage)
         {
             if (sender == DownloadButton)
-                DownloadBuildPackage(buildPackage);
+            {
+                DownloadBuildPackage(buildPackage, delegate (int percentDone, long counter, long total)
+                {
+                    const long oneMegabyte = 1048576;
+                    long transferedMegaBytes = counter / oneMegabyte;
+                    long totalMegaBytes = total / oneMegabyte;
+                    int transferedDigitCount = (int)Math.Log10(transferedMegaBytes) + 1;
+                    int totalDigitCount = (int)Math.Log10(totalMegaBytes) + 1;
+
+                    PXWait.ShowProgress(percentDone, 
+                                        string.Concat(Convert.ToString(transferedMegaBytes, CultureInfo.InvariantCulture).PadLeft(totalDigitCount),
+                                                      " MB / ",
+                                                      Convert.ToString(totalMegaBytes, CultureInfo.InvariantCulture),
+                                                      " MB downloaded",
+                                                      string.Empty.PadRight(totalDigitCount - transferedDigitCount)));
+                }); ;
+            }
+            else if (sender == RemoveButton)
+            {
+                RemoveBuildPackage(buildPackage);
+            }
             else if (sender == InstallButton)
+            {
                 InstallBuildPackage(buildPackage);
+            }
             else if (sender == LaunchButton)
+            {
                 LaunchAcumaticaWizard(buildPackage);
+            }
             else if (sender == OpenFolderButton)
+            {
                 OpenBuildPackageFolder(buildPackage);
+            }
             else if (sender == UninstallButton)
+            {
                 UninstallBuildPackage(buildPackage);
+            }
         }
 
-        private void DownloadBuildPackage(BuildPackage buildPackage)
+        private void DownloadBuildPackage(BuildPackage buildPackage, BuildManager.ProgressCallbackDelegate progressCallback)
         {
-            BuildManager.DownloadPackage(buildPackage);
+            BuildManager.DownloadPackage(buildPackage, progressCallback);
 
             if (File.Exists(BuildManager.GetPathFromKey(buildPackage.Key)))
             {
@@ -119,9 +165,47 @@ namespace Acumatica.WorkspaceManager
 
         private void InstallBuildPackage(BuildPackage buildPackage)
         {
-            InstallManager.InstallAcumatica(buildPackage, (object sender, EventArgs e) => 
+            InstallManager.InstallAcumatica(buildPackage, (object sender, EventArgs e) =>
             {
+                string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+                string directory = Path.GetDirectoryName(filePath);
+                string installDirectory = Path.Combine(directory, "Files");
+                string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
+
+                if (File.Exists(wizardPath))
+                {
+                    buildPackage.SetIsLocal(true);
+                    buildPackage.SetIsInstalled(true);
+                }
+                else
+                {
+                    throw new Exception("Failed to install Acumatica ERP.");
+                }
             });
+        }
+
+        private void RemoveBuildPackage(BuildPackage buildPackage)
+        {
+            string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+
+                string directory = Path.GetDirectoryName(filePath);
+
+                if (Directory.Exists(directory) && !Directory.EnumerateFileSystemEntries(directory).Any())
+                {
+                    Directory.Delete(directory, true);
+                    buildPackage.SetIsInstalled(false);
+                }
+
+                buildPackage.SetIsLocal(false);
+            }
+            else
+            {
+                throw new Exception("Failed to remove local file.");
+            }
         }
 
         private void LaunchAcumaticaWizard(BuildPackage buildPackage)
@@ -150,6 +234,7 @@ namespace Acumatica.WorkspaceManager
             {
                 Directory.Delete(directory, true);
                 buildPackage.SetIsLocal(false);
+                buildPackage.SetIsInstalled(false);
                 return;
             }
 
@@ -190,62 +275,105 @@ namespace Acumatica.WorkspaceManager
 
         private void EnableControls(BuildPackage buildPackage)
         {
-            string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
-            string directory = Path.GetDirectoryName(filePath);
-            string wizardPath = Path.Combine(directory, "Data", "AcumaticaConfig.exe");
+            if (buildPackage != null)
+            {
+                string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+                string directory = Path.GetDirectoryName(filePath);
+                string installDirectory = Path.Combine(directory, "Files");
+                string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
 
-            bool isLocal = buildPackage.IsLocal;
-            bool isRemote = buildPackage.IsRemote;
-            bool isInstallDirectory = (directory != null && Directory.Exists(directory));
-            bool isInstallFile = (filePath != null && File.Exists(filePath));
-            bool isAcumaticaWizard = (wizardPath != null && File.Exists(wizardPath));
+                bool isDirectory = Directory.Exists(directory);
+                bool isInstallDirectory = Directory.Exists(installDirectory);
+                bool isInstallFile = File.Exists(filePath);
+                bool isAcumaticaWizard = File.Exists(wizardPath);
 
-            DownloadButton.Enabled = !isLocal;
-            InstallButton.Enabled = isLocal && isInstallFile;
-            UninstallButton.Enabled = isLocal && isInstallDirectory;
-            OpenFolderButton.Enabled = isLocal && isInstallDirectory;
-            LaunchButton.Enabled = isLocal && isInstallDirectory && isAcumaticaWizard;
+                DownloadButton.Enabled = !isInstallFile;
+                RemoveButton.Enabled = isInstallFile;
+                InstallButton.Enabled = isInstallFile;
+                UninstallButton.Enabled = isDirectory;
+                OpenFolderButton.Enabled = isDirectory;
+                LaunchButton.Enabled = isInstallDirectory && isAcumaticaWizard;
+            }
+            else
+            {
+                DownloadButton.Enabled = false;
+                RemoveButton.Enabled = false;
+                InstallButton.Enabled = false;
+                UninstallButton.Enabled = false;
+                OpenFolderButton.Enabled = false;
+                LaunchButton.Enabled = false;
+            }
         }
 
-        private void ReloadBuildPackage(bool forceReload)
+        private void ReloadBuildPackage()
         {
-            if (forceReload || versionMask != VersionMaskedTextBox.Text)
+            new Thread(new ThreadStart(delegate
             {
-                versionMask = VersionMaskedTextBox.Text;
-
-                new Thread(new ThreadStart(delegate
+                Invoke((MethodInvoker)delegate
                 {
-                    Invoke((MethodInvoker)delegate
+                    PXWait.StartWait(this);
+
+                    try
                     {
-                        PXWait.StartWait(this);
+                        BuildPackageBindingSource.Clear();
 
-                        try
+                        foreach (BuildPackage buildPackage in BuildManager.GetBuildPackages(delegate (int percentDone, long counter, long total)
+                                                              {
+                                                                   PXWait.ShowProgress(-1, string.Concat("Loading build package: ", counter));
+                                                              }))
                         {
-                            BuildPackageBindingSource.Clear();
-
-                            if (forceReload || buildPackages == null)
-                            {
-                                buildPackages = BuildManager.GetBuildPackages();
-                            }
-
-                            foreach (BuildPackage buildPackage in buildPackages)
-                            {
-                                if (CompareVersionMask(buildPackage, VersionMaskedTextBox.Text) &&
-                                    ((buildPackage.IsLocal && ShowLocalCheckBox.Checked) ||
-                                     (buildPackage.IsRemote && ShowRemoteCheckBox.Checked)))
-                                {
-                                    BuildPackageBindingSource.Add(buildPackage);
-                                }
-                            }
+                            BuildPackageBindingSource.Add(buildPackage);
                         }
-                        catch (Exception ex)
-                        {
-                            SysData.ShowException(ex.Message, ErrorLevel.Error);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SysData.ShowException(ex.Message, ErrorLevel.Error);
+                    }
 
-                        PXWait.StopWait();
-                    });
-                })).Start();
+                    PXWait.StopWait();
+                });
+            })).Start();
+        }
+
+        private void FilterBuildPackages()
+        {
+            try
+            {
+                const string emptyVersionMask = "_.__.____";
+
+                versionMask = VersionMaskedTextBox.Text;
+                FilteredLabel.Visible = (versionMask != emptyVersionMask);
+                
+                BuildPackageBindingSource.CurrencyManager.SuspendBinding();
+
+                for (int i = 0; i < BuildPackageDataGridView.Rows.Count; i++)
+                {
+                    DataGridViewRow row = BuildPackageDataGridView.Rows[i];
+
+                    if (row != null)
+                    {
+                        BuildPackage buildPackage = row.DataBoundItem as BuildPackage;
+                        row.Visible = (buildPackage != null &&
+                                        CompareVersionMask(buildPackage, VersionMaskedTextBox.Text) &&
+                                        ((buildPackage.IsLocal && ShowLocalCheckBox.Checked) ||
+                                        (buildPackage.IsRemote && ShowRemoteCheckBox.Checked) ||
+                                        (buildPackage.IsInstalled && ShowInstalledCheckBox.Checked)));
+                    }
+                }
+
+                BuildPackageBindingSource.CurrencyManager.ResumeBinding();
+
+                if (BuildPackageDataGridView.SelectedRows.Count == 0 ||
+                    (BuildPackageDataGridView.SelectedRows[0].DataBoundItem != BuildPackageBindingSource.Current ||
+                     BuildPackageDataGridView.SelectedRows[0].Visible == false))
+                {
+                    BuildPackageDataGridView.ClearSelection();
+                    EnableControls(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                SysData.ShowException(ex.Message, ErrorLevel.Error);
             }
         }
         #endregion

@@ -41,9 +41,10 @@
             this.buildNumberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.isRemoteDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.isLocalDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.IsInstalled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.keyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BuildPackageBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.label1 = new System.Windows.Forms.Label();
+            this.TitleLabel = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.ReloadButton = new System.Windows.Forms.Button();
@@ -56,6 +57,9 @@
             this.OpenFolderButton = new System.Windows.Forms.Button();
             this.LaunchButton = new System.Windows.Forms.Button();
             this.AcumaticaLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.RemoveButton = new System.Windows.Forms.Button();
+            this.ShowInstalledCheckBox = new System.Windows.Forms.CheckBox();
+            this.FilteredLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.BuildPackageDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BuildPackageBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -86,6 +90,7 @@
             this.buildNumberDataGridViewTextBoxColumn,
             this.isRemoteDataGridViewCheckBoxColumn,
             this.isLocalDataGridViewCheckBoxColumn,
+            this.IsInstalled,
             this.keyDataGridViewTextBoxColumn});
             this.BuildPackageDataGridView.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.BuildPackageBindingSource, "Key", true));
             this.BuildPackageDataGridView.DataSource = this.BuildPackageBindingSource;
@@ -139,6 +144,7 @@
             // 
             this.isRemoteDataGridViewCheckBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.isRemoteDataGridViewCheckBoxColumn.DataPropertyName = "IsRemote";
+            this.isRemoteDataGridViewCheckBoxColumn.FillWeight = 1F;
             this.isRemoteDataGridViewCheckBoxColumn.HeaderText = "Remote";
             this.isRemoteDataGridViewCheckBoxColumn.Name = "isRemoteDataGridViewCheckBoxColumn";
             this.isRemoteDataGridViewCheckBoxColumn.ReadOnly = true;
@@ -148,10 +154,21 @@
             // 
             this.isLocalDataGridViewCheckBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.isLocalDataGridViewCheckBoxColumn.DataPropertyName = "IsLocal";
+            this.isLocalDataGridViewCheckBoxColumn.FillWeight = 1F;
             this.isLocalDataGridViewCheckBoxColumn.HeaderText = "Local";
             this.isLocalDataGridViewCheckBoxColumn.Name = "isLocalDataGridViewCheckBoxColumn";
             this.isLocalDataGridViewCheckBoxColumn.ReadOnly = true;
             this.isLocalDataGridViewCheckBoxColumn.Width = 70;
+            // 
+            // IsInstalled
+            // 
+            this.IsInstalled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.IsInstalled.DataPropertyName = "IsInstalled";
+            this.IsInstalled.FillWeight = 1F;
+            this.IsInstalled.HeaderText = "Installed";
+            this.IsInstalled.Name = "IsInstalled";
+            this.IsInstalled.ReadOnly = true;
+            this.IsInstalled.Width = 70;
             // 
             // keyDataGridViewTextBoxColumn
             // 
@@ -171,18 +188,18 @@
             this.BuildPackageBindingSource.Sort = "MajorVersion, MinorVersion, BuildNumber";
             this.BuildPackageBindingSource.CurrentChanged += new System.EventHandler(this.BuildPackageBindingSource_CurrentChanged);
             // 
-            // label1
+            // TitleLabel
             // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
-            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(13, 9);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(561, 48);
-            this.label1.TabIndex = 24;
-            this.label1.Text = "Workspace Manager";
+            this.TitleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.TitleLabel.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
+            this.TitleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.TitleLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.TitleLabel.Location = new System.Drawing.Point(13, 9);
+            this.TitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.TitleLabel.Name = "TitleLabel";
+            this.TitleLabel.Size = new System.Drawing.Size(561, 48);
+            this.TitleLabel.TabIndex = 24;
+            this.TitleLabel.Text = "Workspace Manager";
             // 
             // label46
             // 
@@ -233,11 +250,11 @@
             this.VersionMaskedTextBox.Location = new System.Drawing.Point(149, 582);
             this.VersionMaskedTextBox.Mask = "9.99.9999";
             this.VersionMaskedTextBox.Name = "VersionMaskedTextBox";
-            this.VersionMaskedTextBox.Size = new System.Drawing.Size(129, 26);
+            this.VersionMaskedTextBox.Size = new System.Drawing.Size(128, 26);
             this.VersionMaskedTextBox.TabIndex = 1003;
             this.VersionMaskedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.VersionMaskedTextBox.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-            this.VersionMaskedTextBox.Leave += new System.EventHandler(this.ReloadDataEventHandler);
+            this.VersionMaskedTextBox.TextChanged += new System.EventHandler(this.ReloadDataEventHandler);
             // 
             // InstallButton
             // 
@@ -246,10 +263,10 @@
             this.InstallButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.InstallButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.InstallButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.InstallButton.Location = new System.Drawing.Point(772, 576);
+            this.InstallButton.Location = new System.Drawing.Point(759, 576);
             this.InstallButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.InstallButton.Name = "InstallButton";
-            this.InstallButton.Size = new System.Drawing.Size(138, 37);
+            this.InstallButton.Size = new System.Drawing.Size(148, 37);
             this.InstallButton.TabIndex = 1004;
             this.InstallButton.Text = "&Install";
             this.InstallButton.UseVisualStyleBackColor = true;
@@ -262,10 +279,10 @@
             this.DownloadButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.DownloadButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.DownloadButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.DownloadButton.Location = new System.Drawing.Point(619, 576);
+            this.DownloadButton.Location = new System.Drawing.Point(603, 576);
             this.DownloadButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.DownloadButton.Name = "DownloadButton";
-            this.DownloadButton.Size = new System.Drawing.Size(138, 37);
+            this.DownloadButton.Size = new System.Drawing.Size(148, 37);
             this.DownloadButton.TabIndex = 1005;
             this.DownloadButton.Text = "&Download";
             this.DownloadButton.UseVisualStyleBackColor = true;
@@ -278,10 +295,10 @@
             this.UninstallButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.UninstallButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.UninstallButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.UninstallButton.Location = new System.Drawing.Point(772, 623);
+            this.UninstallButton.Location = new System.Drawing.Point(759, 626);
             this.UninstallButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.UninstallButton.Name = "UninstallButton";
-            this.UninstallButton.Size = new System.Drawing.Size(138, 37);
+            this.UninstallButton.Size = new System.Drawing.Size(148, 37);
             this.UninstallButton.TabIndex = 1006;
             this.UninstallButton.Text = "&Uninstall";
             this.UninstallButton.UseVisualStyleBackColor = true;
@@ -293,7 +310,7 @@
             this.ShowRemoteCheckBox.AutoSize = true;
             this.ShowRemoteCheckBox.Checked = true;
             this.ShowRemoteCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowRemoteCheckBox.Location = new System.Drawing.Point(309, 587);
+            this.ShowRemoteCheckBox.Location = new System.Drawing.Point(313, 584);
             this.ShowRemoteCheckBox.Name = "ShowRemoteCheckBox";
             this.ShowRemoteCheckBox.Size = new System.Drawing.Size(136, 24);
             this.ShowRemoteCheckBox.TabIndex = 1007;
@@ -307,7 +324,7 @@
             this.ShowLocalCheckBox.AutoSize = true;
             this.ShowLocalCheckBox.Checked = true;
             this.ShowLocalCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowLocalCheckBox.Location = new System.Drawing.Point(309, 626);
+            this.ShowLocalCheckBox.Location = new System.Drawing.Point(313, 614);
             this.ShowLocalCheckBox.Name = "ShowLocalCheckBox";
             this.ShowLocalCheckBox.Size = new System.Drawing.Size(117, 24);
             this.ShowLocalCheckBox.TabIndex = 1008;
@@ -322,10 +339,10 @@
             this.OpenFolderButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.OpenFolderButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.OpenFolderButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.OpenFolderButton.Location = new System.Drawing.Point(925, 623);
+            this.OpenFolderButton.Location = new System.Drawing.Point(915, 626);
             this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OpenFolderButton.Name = "OpenFolderButton";
-            this.OpenFolderButton.Size = new System.Drawing.Size(138, 37);
+            this.OpenFolderButton.Size = new System.Drawing.Size(148, 37);
             this.OpenFolderButton.TabIndex = 1009;
             this.OpenFolderButton.Text = "&Open Folder";
             this.OpenFolderButton.UseVisualStyleBackColor = true;
@@ -338,10 +355,10 @@
             this.LaunchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.LaunchButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.LaunchButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.LaunchButton.Location = new System.Drawing.Point(925, 576);
+            this.LaunchButton.Location = new System.Drawing.Point(915, 576);
             this.LaunchButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LaunchButton.Name = "LaunchButton";
-            this.LaunchButton.Size = new System.Drawing.Size(138, 37);
+            this.LaunchButton.Size = new System.Drawing.Size(148, 37);
             this.LaunchButton.TabIndex = 1010;
             this.LaunchButton.Text = "&Open Wizard";
             this.LaunchButton.UseVisualStyleBackColor = true;
@@ -365,12 +382,58 @@
             this.AcumaticaLinkLabel.Text = "http://www.acumatica.com";
             this.AcumaticaLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AcumaticaLinkLabel_LinkClicked);
             // 
+            // RemoveButton
+            // 
+            this.RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RemoveButton.BackColor = System.Drawing.SystemColors.Control;
+            this.RemoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.RemoveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.RemoveButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.RemoveButton.Location = new System.Drawing.Point(603, 626);
+            this.RemoveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.RemoveButton.Name = "RemoveButton";
+            this.RemoveButton.Size = new System.Drawing.Size(148, 37);
+            this.RemoveButton.TabIndex = 1011;
+            this.RemoveButton.Text = "&Remove Local";
+            this.RemoveButton.UseVisualStyleBackColor = true;
+            this.RemoveButton.Click += new System.EventHandler(this.Control_Click);
+            // 
+            // ShowInstalledCheckBox
+            // 
+            this.ShowInstalledCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowInstalledCheckBox.AutoSize = true;
+            this.ShowInstalledCheckBox.Checked = true;
+            this.ShowInstalledCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShowInstalledCheckBox.Location = new System.Drawing.Point(313, 642);
+            this.ShowInstalledCheckBox.Name = "ShowInstalledCheckBox";
+            this.ShowInstalledCheckBox.Size = new System.Drawing.Size(139, 24);
+            this.ShowInstalledCheckBox.TabIndex = 1012;
+            this.ShowInstalledCheckBox.Text = "Show Installed";
+            this.ShowInstalledCheckBox.UseVisualStyleBackColor = true;
+            this.ShowInstalledCheckBox.CheckedChanged += new System.EventHandler(this.ReloadDataEventHandler);
+            // 
+            // FilteredLabel
+            // 
+            this.FilteredLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.FilteredLabel.AutoSize = true;
+            this.FilteredLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.FilteredLabel.ForeColor = System.Drawing.Color.Black;
+            this.FilteredLabel.Location = new System.Drawing.Point(202, 618);
+            this.FilteredLabel.Name = "FilteredLabel";
+            this.FilteredLabel.Size = new System.Drawing.Size(77, 25);
+            this.FilteredLabel.TabIndex = 1013;
+            this.FilteredLabel.Text = "*filtered";
+            this.FilteredLabel.Visible = false;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1076, 692);
+            this.Controls.Add(this.FilteredLabel);
+            this.Controls.Add(this.ShowInstalledCheckBox);
+            this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.LaunchButton);
             this.Controls.Add(this.OpenFolderButton);
             this.Controls.Add(this.ShowLocalCheckBox);
@@ -383,7 +446,7 @@
             this.Controls.Add(this.ReloadButton);
             this.Controls.Add(this.label24);
             this.Controls.Add(this.label46);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.TitleLabel);
             this.Controls.Add(this.BuildPackageDataGridView);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -402,7 +465,7 @@
         #endregion
         private System.Windows.Forms.DataGridView BuildPackageDataGridView;
         private System.Windows.Forms.BindingSource BuildPackageBindingSource;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label TitleLabel;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Button ReloadButton;
@@ -410,17 +473,21 @@
         private System.Windows.Forms.Button InstallButton;
         private System.Windows.Forms.Button DownloadButton;
         private System.Windows.Forms.Button UninstallButton;
-        private System.Windows.Forms.DataGridViewTextBoxColumn majorVersionDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn minorVersionDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn buildNumberDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn isRemoteDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn isLocalDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn keyDataGridViewTextBoxColumn;
         private System.Windows.Forms.CheckBox ShowRemoteCheckBox;
         private System.Windows.Forms.CheckBox ShowLocalCheckBox;
         private System.Windows.Forms.Button OpenFolderButton;
         private System.Windows.Forms.Button LaunchButton;
         private System.Windows.Forms.LinkLabel AcumaticaLinkLabel;
+        private System.Windows.Forms.Button RemoveButton;
+        private System.Windows.Forms.CheckBox ShowInstalledCheckBox;
+        private System.Windows.Forms.DataGridViewTextBoxColumn majorVersionDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn minorVersionDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn buildNumberDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn isRemoteDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn isLocalDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsInstalled;
+        private System.Windows.Forms.DataGridViewTextBoxColumn keyDataGridViewTextBoxColumn;
+        private System.Windows.Forms.Label FilteredLabel;
     }
 }
 

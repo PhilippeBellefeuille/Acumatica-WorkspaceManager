@@ -10,17 +10,17 @@ namespace Acumatica.WorkspaceManager.Tests
         [TestMethod]
         public void Download61Packages()
         {
-            foreach (var buildPackage in BuildManager.GetBuildPackages())
+            foreach (var buildPackage in BuildManager.GetBuildPackages(null))
             {
                 if (buildPackage.MajorVersion == 6 && buildPackage.MinorVersion == 10)
-                    BuildManager.DownloadPackage(buildPackage);
+                    BuildManager.DownloadPackage(buildPackage, null);
             }
         }
 
         [TestMethod]
         public void Local61PackagesAreTheSameAsRemote()
         {
-            foreach (var buildPackage in BuildManager.GetBuildPackages())
+            foreach (var buildPackage in BuildManager.GetBuildPackages(null))
             {
                 var v = buildPackage.Key;
                 //if (buildPackage.MajorVersion == 6 && buildPackage.MinorVersion == 10)

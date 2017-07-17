@@ -26,12 +26,13 @@ namespace Acumatica.WorkspaceManager.Install
         public static void InstallAcumatica(BuildPackage buildPackage, EventHandler callback)
         {
             string installerPath = BuildManager.GetPathFromKey(buildPackage.Key);          
-            string installerDirectory = Path.GetDirectoryName(installerPath);
+            string installerDirectory = Path.Combine(Path.GetDirectoryName(installerPath), "Files");
             string installerTempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(installerPath));
             File.Copy(installerPath, installerTempPath, true);
 
             Process process = new Process()
             {
+                EnableRaisingEvents = true,
                 StartInfo = new ProcessStartInfo("msiexec.exe", string.Format("/a \"{0}\" /qb targetdir=\"{1}\"", installerTempPath, installerDirectory))
             };
             
@@ -49,7 +50,7 @@ namespace Acumatica.WorkspaceManager.Install
         {
             string path = BuildManager.GetPathFromKey(buildPackage.Key);
             string directory = Path.GetDirectoryName(path);
-            string wizardPath = Path.Combine(directory, "Data", "AcumaticaConfig.exe");
+            string wizardPath = Path.Combine(directory, "Files", "Data", "AcumaticaConfig.exe");
 
             Process.Start(new ProcessStartInfo(wizardPath));
         }

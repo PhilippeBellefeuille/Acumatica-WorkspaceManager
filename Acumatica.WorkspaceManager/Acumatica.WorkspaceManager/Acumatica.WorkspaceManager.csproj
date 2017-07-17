@@ -50,10 +50,6 @@
     <ApplicationIcon>acumatica.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConfigCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ConfigCore.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -73,6 +69,25 @@
     <Compile Include="Controls\BaseControl.Designer.cs">
       <DependentUpon>BaseControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BaseDialogButton.cs" />
+    <Compile Include="Controls\FormMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\FormMessage.designer.cs">
+      <DependentUpon>FormMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MessageDialog.cs" />
+    <Compile Include="Controls\MessageDialogParam.cs" />
+    <Compile Include="Controls\Messages.cs" />
+    <Compile Include="Controls\ReflectionHelper.cs" />
+    <Compile Include="Controls\SysData.cs" />
+    <Compile Include="Controls\WaitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\WaitForm.Designer.cs">
+      <DependentUpon>WaitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WindowDialog.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +96,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\FormMessage.resx">
+      <DependentUpon>FormMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\WaitForm.resx">
+      <DependentUpon>WaitForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

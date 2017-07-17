@@ -52,6 +52,7 @@ namespace Acumatica.WorkspaceManager.Builds
         public int MinorVersion { get; }
         public int BuildNumber { get; }
         public bool IsRemote { get; private set; }
+        public bool IsInstalled { get; private set; }
         public bool IsLocal { get; private set; }
 
         public string Key { get; }
@@ -59,6 +60,11 @@ namespace Acumatica.WorkspaceManager.Builds
         public void SetIsRemote()
         {
             this.IsRemote = true;
+        }
+
+        public void SetIsInstalled(bool isInstalled)
+        {
+            this.IsInstalled = isInstalled;
         }
 
         public void SetIsLocal(bool isLocal)

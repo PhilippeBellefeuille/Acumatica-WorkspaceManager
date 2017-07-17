@@ -12,18 +12,30 @@ namespace Acumatica.WorkspaceManager.Builds
 {
     public static class BuildManager
     {
-        public static IEnumerable<BuildPackage> GetBuildPackages()
+        public delegate void ProgressCallbackDelegate(int percentDone, long counter, long total);
+
+        public static IEnumerable<BuildPackage> GetBuildPackages(ProgressCallbackDelegate progressCallback)
         {
             var localBuildPackages = GetLocalBuildPackages().ToDictionary(k => k.Key, v => v);
+            int count = 0;
 
-            foreach(var remoteBuildPackage in GetRemoteBuildPackages())
+            foreach (var remoteBuildPackage in GetRemoteBuildPackages())
             {
                 remoteBuildPackage.SetIsRemote();
+
                 if (localBuildPackages.ContainsKey(remoteBuildPackage.Key))
                 {
                     localBuildPackages.Remove(remoteBuildPackage.Key);
+
+                    string filePath = GetPathFromKey(remoteBuildPackage.Key);
+                    string directory = Path.GetDirectoryName(filePath);
+                    string installDirectory = Path.Combine(directory, "Files");
+                    string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
                     remoteBuildPackage.SetIsLocal(true);
+                    remoteBuildPackage.SetIsInstalled(File.Exists(wizardPath));
                 }
+
+                progressCallback?.Invoke(0, ++count, 0);
 
                 yield return remoteBuildPackage;
             }
@@ -34,6 +46,7 @@ namespace Acumatica.WorkspaceManager.Builds
                 yield return localOnlyPackage;
             }
         }
+
         private static IEnumerable<BuildPackage> GetLocalBuildPackages()
         {
             foreach (var file in GetLocalFiles(GetLocalRepositoryFolder()))
@@ -43,10 +56,9 @@ namespace Acumatica.WorkspaceManager.Builds
                 BuildPackage buildPackage;
                 if (key.EndsWith(Resources.PackageName) && BuildPackage.TryCreate(key, out buildPackage))
                     yield return buildPackage;
-
             }
-
-        }  
+        }
+        
         private static IEnumerable<BuildPackage> GetRemoteBuildPackages()
         {
             var s3Uri = GetS3Uri();
@@ -85,7 +97,7 @@ namespace Acumatica.WorkspaceManager.Builds
             }
         }
 
-        public static void DownloadPackage(BuildPackage buildPackage)
+        public static void DownloadPackage(BuildPackage buildPackage, ProgressCallbackDelegate progressCallback)
         {
             if (!buildPackage.IsRemote)
                 throw new Exception("Cannot download package that is not available online");
@@ -102,8 +114,14 @@ namespace Acumatica.WorkspaceManager.Builds
                 using (GetObjectResponse response = client.GetObject(request))
                 {
                     string dest = GetPathFromKey(buildPackage.Key);
+
                     if (!File.Exists(dest))
                     {
+                        response.WriteObjectProgressEvent += new EventHandler<WriteObjectProgressArgs>(delegate (object sender, WriteObjectProgressArgs e)
+                        {
+                            progressCallback?.Invoke(e.PercentDone, e.TransferredBytes, e.TotalBytes);
+                        });
+
                         response.WriteResponseStreamToFile(dest);
                     }
                 }
