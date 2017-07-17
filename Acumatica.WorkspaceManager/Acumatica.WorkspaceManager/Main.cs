@@ -319,11 +319,13 @@ namespace Acumatica.WorkspaceManager
 
                         foreach (BuildPackage buildPackage in BuildManager.GetBuildPackages(delegate (int percentDone, long counter, long total)
                                                               {
-                                                                   PXWait.ShowProgress(-1, string.Concat("Loading build package: ", counter));
+                                                                  PXWait.ShowProgress(-1, string.Concat("Loading build package: ", counter));
                                                               }))
                         {
                             BuildPackageBindingSource.Add(buildPackage);
                         }
+
+                        FilterBuildPackages();
                     }
                     catch (Exception ex)
                     {
