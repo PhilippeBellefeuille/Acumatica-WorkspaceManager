@@ -61,9 +61,9 @@ namespace Acumatica.WorkspaceManager.Builds
             this.IsRemote = true;
         }
 
-        public void SetIsLocal()
+        public void SetIsLocal(bool isLocal)
         {
-            this.IsLocal = true;
+            this.IsLocal = isLocal;
         }
     }
 }

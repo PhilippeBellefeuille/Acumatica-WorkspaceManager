@@ -22,7 +22,7 @@ namespace Acumatica.WorkspaceManager.Builds
                 if (localBuildPackages.ContainsKey(remoteBuildPackage.Key))
                 {
                     localBuildPackages.Remove(remoteBuildPackage.Key);
-                    remoteBuildPackage.SetIsLocal();
+                    remoteBuildPackage.SetIsLocal(true);
                 }
 
                 yield return remoteBuildPackage;
@@ -30,7 +30,7 @@ namespace Acumatica.WorkspaceManager.Builds
 
             foreach(var localOnlyPackage in localBuildPackages.Values)
             {
-                localOnlyPackage.SetIsLocal();
+                localOnlyPackage.SetIsLocal(true);
                 yield return localOnlyPackage;
             }
         }

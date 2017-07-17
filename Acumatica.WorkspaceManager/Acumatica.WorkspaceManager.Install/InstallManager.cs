@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,22 +22,37 @@ namespace Acumatica.WorkspaceManager.Install
         }
 
         public delegate void ProcessExitedDelegate();
-        public static void InstallAcumatica(BuildPackage buildPackage, ProcessExitedDelegate del = null)
+
+        public static void InstallAcumatica(BuildPackage buildPackage, EventHandler callback)
         {
-            var path = BuildManager.GetPathFromKey(buildPackage.Key);
+            string installerPath = BuildManager.GetPathFromKey(buildPackage.Key);          
+            string installerDirectory = Path.GetDirectoryName(installerPath);
+            string installerTempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(installerPath));
+            File.Copy(installerPath, installerTempPath, true);
 
-            var uninstallProcess = GetUninstallAcumaticaProcess(() =>
-                                        {
-                                            GetInstallAcumaticaProcess(path, del);
-                                        });
-
-            
-            if (uninstallProcess == null)
+            Process process = new Process()
             {
-                GetInstallAcumaticaProcess(path, del);
-            }
+                StartInfo = new ProcessStartInfo("msiexec.exe", string.Format("/a \"{0}\" /qb targetdir=\"{1}\"", installerTempPath, installerDirectory))
+            };
+            
+            process.Exited += delegate
+            {
+                File.Delete(installerTempPath);
+            };
+
+            process.Exited += callback;
+            process.Start();
+            process.WaitForExit();
         }
         
+        public static void LaunchAcumaticaWizard(BuildPackage buildPackage)
+        {
+            string path = BuildManager.GetPathFromKey(buildPackage.Key);
+            string directory = Path.GetDirectoryName(path);
+            string wizardPath = Path.Combine(directory, "Data", "AcumaticaConfig.exe");
+
+            Process.Start(new ProcessStartInfo(wizardPath));
+        }
 
         private static Process GetInstallAcumaticaProcess(string path, ProcessExitedDelegate del)
         {
@@ -74,9 +90,7 @@ namespace Acumatica.WorkspaceManager.Install
 
             return p;
         }
-
-
-
+        
         private static Dictionary<string, object> GetAcumaticaRegistryKeyValues()
         {
             string registry_key = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
