@@ -31,7 +31,7 @@ namespace Acumatica.WorkspaceManager.Builds
                     string directory = Path.GetDirectoryName(filePath);
                     string installDirectory = Path.Combine(directory, "Files");
                     string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
-                    remoteBuildPackage.SetIsLocal(true);
+                    remoteBuildPackage.SetIsLocal(File.Exists(filePath));
                     remoteBuildPackage.SetIsInstalled(File.Exists(wizardPath));
                 }
 
@@ -54,8 +54,12 @@ namespace Acumatica.WorkspaceManager.Builds
                 var key = GetKeyFromPath(file);
 
                 BuildPackage buildPackage;
-                if (key.EndsWith(Resources.PackageName) && BuildPackage.TryCreate(key, out buildPackage))
+
+                if (key.EndsWith(string.Concat("AcumaticaERP/", Resources.PackageName)) &&
+                    BuildPackage.TryCreate(key, out buildPackage))
+                {
                     yield return buildPackage;
+                }
             }
         }
         

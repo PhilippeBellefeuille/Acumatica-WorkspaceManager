@@ -1,4 +1,4 @@
-﻿namespace ConfigCore.UI
+﻿namespace Acumatica.WorkspaceManager
 {
 	partial class WaitForm
 	{
@@ -70,7 +70,7 @@
             this.WaitProgressLabel.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.WaitProgressLabel.ForeColor = System.Drawing.Color.Black;
             this.WaitProgressLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.WaitProgressLabel.Location = new System.Drawing.Point(13, 121);
+            this.WaitProgressLabel.Location = new System.Drawing.Point(13, 115);
             this.WaitProgressLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.WaitProgressLabel.Name = "WaitProgressLabel";
             this.WaitProgressLabel.Size = new System.Drawing.Size(459, 28);

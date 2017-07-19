@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Drawing;
 
-namespace ConfigCore.UI
+namespace Acumatica.WorkspaceManager
 {
 	public partial class WaitForm : Form
 	{
