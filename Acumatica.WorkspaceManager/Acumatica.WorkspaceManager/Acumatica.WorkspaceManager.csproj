@@ -50,41 +50,23 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>acumatica.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="ConfigCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Acumatica ERP\Data\ConfigCore.dll</HintPath>
+      <HintPath>DLL\ConfigCore.dll</HintPath>
     </Reference>
-    <Reference Include="Devart.Data">
-      <HintPath>DLL\Devart.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Devart.Data.MySql, Version=8.3.181.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=13.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Devart.Data.MySql.dll</HintPath>
+      <HintPath>DLL\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Interop.ActiveDs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.SqlServer.Smo, Version=13.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>DLL\Interop.ActiveDs.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.IISOle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>DLL\Interop.IISOle.dll</HintPath>
-    </Reference>
-    <Reference Include="MdbgCore, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\MdbgCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Data.Schema.ScriptDom, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Microsoft.Data.Schema.ScriptDom.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Data.Schema.ScriptDom.Sql, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Microsoft.Data.Schema.ScriptDom.Sql.dll</HintPath>
+      <HintPath>DLL\Microsoft.SqlServer.Smo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,69 +74,62 @@
     </Reference>
     <Reference Include="PX.BulkInsert, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Acumatica ERP\Data\PX.BulkInsert.dll</HintPath>
+      <HintPath>DLL\PX.BulkInsert.dll</HintPath>
     </Reference>
-    <Reference Include="PX.Config.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Acumatica ERP\Data\PX.Config.Common.dll</HintPath>
+    <Reference Include="PX.Config.Common">
+      <HintPath>DLL\PX.Config.Common.dll</HintPath>
     </Reference>
     <Reference Include="PX.DbServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Acumatica ERP\Data\PX.DbServices.dll</HintPath>
+      <HintPath>DLL\PX.DbServices.dll</HintPath>
     </Reference>
     <Reference Include="PX.WebConfig, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Acumatica ERP\Data\PX.WebConfig.dll</HintPath>
+      <HintPath>DLL\PX.WebConfig.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DBInfo.cs" />
+    <Compile Include="ServiceHelper.cs" />
+    <Compile Include="Structures\DBInfo.cs" />
+    <Compile Include="Controls\DropDownButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Structures\ErpConfiguration.cs" />
+    <Compile Include="Controls\FolderSelectDialog.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="WaitForm.cs">
+    <Compile Include="Main.Instance.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WaitForm.Designer.cs">
-      <DependentUpon>WaitForm.cs</DependentUpon>
+    <Compile Include="Main.Menu.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Package.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Restore.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WaitForm.resx">
-      <DependentUpon>WaitForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\DataSources\Acumatica.WorkspaceManager.Builds.BuildPackage.datasource" />
-    <None Include="Properties\DataSources\Acumatica.WorkspaceManager.Builds.WebSite.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -169,9 +144,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Acumatica.WorkspaceManager.BackupRestore\Acumatica.WorkspaceManager.BackupRestore.csproj">
+      <Project>{BA84510B-A2E7-4D75-9963-E613EC169F35}</Project>
+      <Name>Acumatica.WorkspaceManager.BackupRestore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Acumatica.WorkspaceManager.Builds\Acumatica.WorkspaceManager.Builds.csproj">
       <Project>{ca7b52af-cdcf-4c79-9fd3-ebcbc9a32849}</Project>
       <Name>Acumatica.WorkspaceManager.Builds</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Acumatica.WorkspaceManager.Common\Acumatica.WorkspaceManager.Common.csproj">
+      <Project>{4D41D949-07E2-41D0-931B-5228BE0015D8}</Project>
+      <Name>Acumatica.WorkspaceManager.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Acumatica.WorkspaceManager.Install\Acumatica.WorkspaceManager.Install.csproj">
       <Project>{9c6e0ab6-612b-4256-8d57-f083ff78ed8b}</Project>
@@ -191,32 +174,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="acumatica.ico" />
-    <Content Include="DLL\Devart.Data.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Devart.Data.MySql.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Interop.ActiveDs.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Interop.IISOle.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\MdbgCore.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Microsoft.Data.Schema.ScriptDom.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Microsoft.Data.Schema.ScriptDom.Sql.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLL\Microsoft.Web.Administration.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="Properties\DataSources\" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /E /Y "$(ProjectDir)DLL" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

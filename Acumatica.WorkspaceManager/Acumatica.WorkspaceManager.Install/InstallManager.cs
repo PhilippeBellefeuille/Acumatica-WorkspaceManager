@@ -1,12 +1,12 @@
 ﻿using Acumatica.WorkspaceManager.Builds;
+using Acumatica.WorkspaceManager.Common;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Acumatica.WorkspaceManager.Install
 {
@@ -53,6 +53,105 @@ namespace Acumatica.WorkspaceManager.Install
             string wizardPath = Path.Combine(directory, "Files", "Data", "AcumaticaConfig.exe");
 
             Process.Start(new ProcessStartInfo(wizardPath));
+        }
+
+        public static void OpenPackageFolder(BuildPackage buildPackage)
+        {
+            string directory = Path.GetDirectoryName(BuildManager.GetPathFromKey(buildPackage.Key));
+
+            if (Directory.Exists(directory))
+            {
+                Process.Start(directory);
+                return;
+            }
+
+            throw new Exception(string.Concat("Install directory not found: ", Environment.NewLine, directory));
+        }
+
+        public static void UninstallPackage(BuildPackage buildPackage)
+        {
+            string directory = Path.GetDirectoryName(BuildManager.GetPathFromKey(buildPackage.Key));
+
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, true);
+                buildPackage.SetIsLocal(false);
+                buildPackage.SetIsInstalled(false);
+                return;
+            }
+
+            throw new Exception(string.Concat("Install directory not found: ", Environment.NewLine, directory));
+        }
+
+        public static void DownloadPackage(BuildPackage buildPackage)
+        {
+            BuildManager.DownloadPackage(buildPackage, delegate (int percentDone, long counter, long total)
+            {
+                const long oneMegabyte = 1048576;
+                long transferedMegaBytes = counter / oneMegabyte;
+                long totalMegaBytes = total / oneMegabyte;
+                int totalDigitCount = totalMegaBytes > 0 ? (int)Math.Log10(totalMegaBytes) + 1 : 0;
+
+                PXWait.ShowProgress(percentDone,
+                                    string.Concat(Convert.ToString(transferedMegaBytes, CultureInfo.InvariantCulture).PadLeft(totalDigitCount),
+                                                  " MB / ",
+                                                  Convert.ToString(totalMegaBytes, CultureInfo.InvariantCulture),
+                                                  " MB downloaded"));
+            });
+
+            if (File.Exists(BuildManager.GetPathFromKey(buildPackage.Key)))
+            {
+                buildPackage.SetIsLocal(true);
+            }
+            else
+            {
+                throw new Exception("Failed to download remote file to local directory.");
+            }
+        }
+
+        public static void InstallPackage(BuildPackage buildPackage)
+        {
+            InstallManager.InstallAcumatica(buildPackage, (object sender, EventArgs e) =>
+            {
+                string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+                string directory = Path.GetDirectoryName(filePath);
+                string installDirectory = Path.Combine(directory, "Files");
+                string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
+
+                if (File.Exists(wizardPath))
+                {
+                    buildPackage.SetIsLocal(true);
+                    buildPackage.SetIsInstalled(true);
+                }
+                else
+                {
+                    throw new Exception("Failed to install Acumatica ERP.");
+                }
+            });
+        }
+
+        public static void RemovePackage(BuildPackage buildPackage)
+        {
+            string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+
+                string directory = Path.GetDirectoryName(filePath);
+
+                if (Directory.Exists(directory) && !Directory.EnumerateFileSystemEntries(directory).Any())
+                {
+                    Directory.Delete(directory, true);
+                    buildPackage.SetIsInstalled(false);
+                }
+
+                buildPackage.SetIsLocal(false);
+            }
+            else
+            {
+                throw new Exception("Failed to remove local file.");
+            }
         }
 
         private static Process GetInstallAcumaticaProcess(string path, ProcessExitedDelegate del)

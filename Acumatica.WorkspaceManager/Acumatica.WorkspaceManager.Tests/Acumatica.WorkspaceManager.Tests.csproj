@@ -60,6 +60,10 @@
       <Project>{ca7b52af-cdcf-4c79-9fd3-ebcbc9a32849}</Project>
       <Name>Acumatica.WorkspaceManager.Builds</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Acumatica.WorkspaceManager.Common\Acumatica.WorkspaceManager.Common.csproj">
+      <Project>{4d41d949-07e2-41d0-931b-5228be0015d8}</Project>
+      <Name>Acumatica.WorkspaceManager.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Acumatica.WorkspaceManager.Install\Acumatica.WorkspaceManager.Install.csproj">
       <Project>{9c6e0ab6-612b-4256-8d57-f083ff78ed8b}</Project>
       <Name>Acumatica.WorkspaceManager.Install</Name>

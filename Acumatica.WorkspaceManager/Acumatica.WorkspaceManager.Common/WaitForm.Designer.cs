@@ -42,7 +42,7 @@
             this.lbWait.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
             this.lbWait.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
             this.lbWait.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.lbWait.Location = new System.Drawing.Point(101, 15);
+            this.lbWait.Location = new System.Drawing.Point(83, 20);
             this.lbWait.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbWait.Name = "lbWait";
             this.lbWait.Size = new System.Drawing.Size(262, 45);
@@ -53,7 +53,7 @@
             // Spinner
             // 
             this.Spinner.Image = ((System.Drawing.Image)(resources.GetObject("Spinner.Image")));
-            this.Spinner.Location = new System.Drawing.Point(351, 10);
+            this.Spinner.Location = new System.Drawing.Point(351, 17);
             this.Spinner.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Spinner.Name = "Spinner";
             this.Spinner.Size = new System.Drawing.Size(32, 32);
@@ -80,9 +80,9 @@
             // 
             // WaitProgressBar
             // 
-            this.WaitProgressBar.Location = new System.Drawing.Point(109, 84);
+            this.WaitProgressBar.Location = new System.Drawing.Point(91, 84);
             this.WaitProgressBar.Name = "WaitProgressBar";
-            this.WaitProgressBar.Size = new System.Drawing.Size(274, 23);
+            this.WaitProgressBar.Size = new System.Drawing.Size(300, 23);
             this.WaitProgressBar.TabIndex = 27;
             this.WaitProgressBar.UseWaitCursor = true;
             // 

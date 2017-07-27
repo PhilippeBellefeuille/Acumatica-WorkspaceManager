@@ -1,12 +1,12 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Acumatica.WorkspaceManager.Builds.Properties;
+using Acumatica.WorkspaceManager.Common;
 using Amazon.Runtime.Internal.Util;
 using Amazon.S3;
 using Amazon.S3.Model;
-using System.IO;
 using System;
-using Acumatica.WorkspaceManager.Builds.Properties;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Acumatica.WorkspaceManager.Builds
 {
@@ -35,7 +35,10 @@ namespace Acumatica.WorkspaceManager.Builds
                     remoteBuildPackage.SetIsInstalled(File.Exists(wizardPath));
                 }
 
-                progressCallback?.Invoke(0, ++count, 0);
+                if (progressCallback != null)
+                {
+                    progressCallback.Invoke(0, ++count, 0);
+                }
 
                 yield return remoteBuildPackage;
             }
@@ -55,7 +58,7 @@ namespace Acumatica.WorkspaceManager.Builds
 
                 BuildPackage buildPackage;
 
-                if (key.EndsWith(string.Concat("AcumaticaERP/", Resources.PackageName)) &&
+                if (key.EndsWith(string.Concat("AcumaticaERP/", Resources.PackageName), StringComparison.InvariantCultureIgnoreCase) &&
                     BuildPackage.TryCreate(key, out buildPackage))
                 {
                     yield return buildPackage;
@@ -82,9 +85,12 @@ namespace Acumatica.WorkspaceManager.Builds
                     foreach (var s3Object in response.S3Objects)
                     {
                         BuildPackage buildPackage;
-                        if (s3Object.Key.EndsWith(Resources.PackageName) && BuildPackage.TryCreate(s3Object.Key, out buildPackage))
-                            yield return buildPackage;
 
+                        if (s3Object.Key.EndsWith(Resources.PackageName, StringComparison.InvariantCultureIgnoreCase) &&
+                            BuildPackage.TryCreate(s3Object.Key, out buildPackage))
+                        {
+                            yield return buildPackage;
+                        }
                     }
 
                     // If the response is truncated, we'll make another request 
@@ -123,7 +129,10 @@ namespace Acumatica.WorkspaceManager.Builds
                     {
                         response.WriteObjectProgressEvent += new EventHandler<WriteObjectProgressArgs>(delegate (object sender, WriteObjectProgressArgs e)
                         {
-                            progressCallback?.Invoke(e.PercentDone, e.TransferredBytes, e.TotalBytes);
+                            if (progressCallback != null)
+                            {
+                                progressCallback.Invoke(e.PercentDone, e.TransferredBytes, e.TotalBytes);
+                            }
                         });
 
                         response.WriteResponseStreamToFile(dest);

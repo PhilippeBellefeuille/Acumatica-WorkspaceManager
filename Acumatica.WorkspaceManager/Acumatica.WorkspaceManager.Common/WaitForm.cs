@@ -2,12 +2,16 @@
 using System.Windows.Forms;
 using System.Threading;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Acumatica.WorkspaceManager
 {
-	public partial class WaitForm : Form
-	{
-		private Boolean AllowClose;
+    public partial class WaitForm : Form
+    {
+        [DllImport("User32.dll")]
+        public static extern Int32 SetForegroundWindow(int hWnd);
+        
+        private Boolean AllowClose;
 		public delegate void CloseDelegate();
 		public CloseDelegate CloseWait;
 
@@ -17,6 +21,12 @@ namespace Acumatica.WorkspaceManager
 
 			InitializeComponent();
 		}
+
+        public void SetForeground()
+        {
+            BringToFront();
+            SetForegroundWindow(Handle.ToInt32());
+        }
 
         public void ShowProgress(int percentDone, string progressText)
         {
@@ -29,6 +39,7 @@ namespace Acumatica.WorkspaceManager
             if (percentDone >= 0 && percentDone <= 100)
             {
                 WaitProgressBar.Value = percentDone;
+                WaitProgressBar.Style = ProgressBarStyle.Blocks;
             }
             else
             {
@@ -58,13 +69,15 @@ namespace Acumatica.WorkspaceManager
 
 		public abstract void Open();
 		public abstract void Close();
-		public abstract void ShowProgress(int percentDone, string progressText);
+        public abstract void SetForeground();
+        public abstract void ShowProgress(int percentDone, string progressText);
 	}
     
 	public class WaitWindow : BaseWait
 	{
 		private WaitForm form;
 		private Thread thread;
+        private bool isClosing;
 
 		public WaitWindow()
 		{
@@ -73,30 +86,59 @@ namespace Acumatica.WorkspaceManager
 			thread = new Thread(threadStartPoint);
 			thread.Name = "WaitFormThread";
 		}
-
-		public override void Open()
+        
+        public override void Open()
 		{
-			thread.Start();
+            isClosing = false;
+            thread.Start();
 
 			while (!form.IsHandleCreated)
 			{
 				Thread.Sleep(50);
 			}
-
-		}
+        }
 		public override void Close()
 		{
-			form.Invoke(form.CloseWait);
+            isClosing = true;
 
+            form.Invoke(form.CloseWait);
 			thread.Join();
 		}
 
+        public override void SetForeground()
+        {
+            if (form != null && form.IsHandleCreated && !form.IsDisposed && !isClosing)
+            {
+                if (form.InvokeRequired)
+                {
+                    form.Invoke((MethodInvoker)delegate
+                    {
+                        form.SetForeground();
+                    });
+                }
+                else
+                {
+                    form.SetForeground();
+                }
+            }
+        }
+
         public override void ShowProgress(int percentDone, string progressText)
         {
-            form.Invoke((MethodInvoker)delegate
+            if (form != null && form.IsHandleCreated && !form.IsDisposed && !isClosing)
             {
-                form.ShowProgress(percentDone, progressText);
-            });
+                if (form.InvokeRequired)
+                {
+                    form.Invoke((MethodInvoker)delegate
+                    {
+                        form.ShowProgress(percentDone, progressText);
+                    });
+                }
+                else
+                {
+                    form.ShowProgress(percentDone, progressText);
+                }
+            }
         }
 
         private void threadStartPoint()
@@ -131,6 +173,15 @@ namespace Acumatica.WorkspaceManager
 			CallingForm = null;
 			IsStarted = false;
 		}
+
+        public static void SetForeground()
+        {
+            if (Process != null)
+            {
+                Process.SetForeground();
+            }
+        }
+
         public static void ShowProgress(int percentDone, string progressText)
         {
             if (Process != null)
@@ -157,7 +208,7 @@ namespace Acumatica.WorkspaceManager
 		{
             Process = new WaitWindow();
 			Process.Open();
-		}
+        }
 		private static void Stop()
 		{
 			Process.Close();

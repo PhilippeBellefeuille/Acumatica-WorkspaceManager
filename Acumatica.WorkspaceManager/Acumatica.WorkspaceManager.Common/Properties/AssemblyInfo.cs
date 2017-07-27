@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Acumatica.WorkspaceManager")]
+[assembly: AssemblyTitle("Acumatica.WorkspaceManager.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Acumatica")]
-[assembly: AssemblyProduct("Acumatica.WorkspaceManager")]
+[assembly: AssemblyProduct("Acumatica.WorkspaceManager.Common")]
 [assembly: AssemblyCopyright("Copyright © Acumatica 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e6f87dc1-20b9-4598-994f-a7cfb80f1cbc")]
+[assembly: Guid("ca7b52af-cdcf-4c79-9fd3-ebcbc9a32849")]
 
 // Version information for an assembly consists of the following four values:
 //
