@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using ConfigCore;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace ERPConfig
 {
@@ -70,28 +68,28 @@ namespace ERPConfig
         {
             get
             {
-                return SysData.AppPath + "Files\\";
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Files\\");
             }
         }
         public override string PortalSitePath
         {
             get
             {
-                return SysData.AppPath + "Portal\\";
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Portal\\");
             }
         }
         public override string DatabaseFilePath
         {
             get
             {
-                return SysData.AppPath + "Database\\";
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Database\\");
             }
         }
         public override string DataFilesPath
         {
             get
             {
-                return SysData.AppPath + "Database\\Data\\";
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Database\\Data\\");
             }
         }
         public override string DBType

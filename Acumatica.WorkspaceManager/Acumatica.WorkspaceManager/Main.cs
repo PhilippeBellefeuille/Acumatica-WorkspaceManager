@@ -1,11 +1,12 @@
 ﻿using ConfigCore;
 using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
+using PX.WebConfig;
 using System;
-using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace Acumatica.WorkspaceManager
         private string instanceNameFilter;
         private string packageVersionFilter;
         private string selectedRow;
+        private ServiceControllerStatus sqlServerBrowserServiceStatus;
         #endregion
 
         #region Constructor
@@ -29,52 +31,30 @@ namespace Acumatica.WorkspaceManager
             Size desiredSize = new Size(800, 480);
             MinimumSize = desiredSize;
             Size = desiredSize;
+            ServerNameComboBox.Text = Environment.MachineName;
         }
         #endregion
 
         #region Events
         private void ActionControl_Click(object sender, EventArgs e)
         {
-            try
+            new Thread(new ThreadStart(delegate
             {
-                new Thread(new ThreadStart(delegate
+                Invoke((MethodInvoker)delegate
                 {
-                    Invoke((MethodInvoker)delegate
+                    try
                     {
                         PXWait.StartWait(this);
                         ExecuteAction(sender);
                         PXWait.StopWait();
-                    });
-                })).Start();
-            }
-            catch (Exception ex)
-            {
-                if (PXWait.IsStarted || PXWait.IsShown)
-                {
-                    PXWait.StopWait();
-                }
-
-                SysData.ShowException(ex.Message, ErrorLevel.Error);
-            }
-        }
-
-        private void BackButton_Click(object sender, EventArgs e)
-        {
-            if (sender == RestoreBackButton)
-            {
-                RestorePanel.Visible = false;
-                InstancePanel.Visible = true;
-            }
-            else if (sender == PackageBackButton)
-            {
-                PackagePanel.Visible = false;
-                MenuPanel.Visible = true;
-            }
-            else if (sender == InstanceBackButton)
-            {
-                InstancePanel.Visible = false;
-                MenuPanel.Visible = true;
-            }
+                    }
+                    catch (Exception ex)
+                    {
+                        PXWait.StopWait();
+                        SysData.ShowException(ex.ToString(), ErrorLevel.Error);
+                    }
+                });
+            })).Start();
         }
 
         private void BindingSource_CurrentChanged(object sender, EventArgs e)
@@ -144,14 +124,6 @@ namespace Acumatica.WorkspaceManager
             }
         }
 
-        private void SQLServerAuthRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            LoginLabel.Enabled = SQLServerAuthRadioButton.Checked;
-            DatabaseLoginTextBox.Enabled = SQLServerAuthRadioButton.Checked;
-            PasswordLabel.Enabled = SQLServerAuthRadioButton.Checked;
-            DatabasePasswordTextBox.Enabled = SQLServerAuthRadioButton.Checked;
-        }
-
         protected override void WndProc(ref Message message)
         {
             const uint WM_SYSCOMMAND = 0x0112;
@@ -183,133 +155,6 @@ namespace Acumatica.WorkspaceManager
 
             return new ServerConnection();
         }
-
-        private void ExecuteAction(object sender)
-        {
-            if (PackagePanel.Visible)
-            {
-                ExecutePackageAction(sender);
-                FilterPackage();
-                PackageDataGridView.Focus();
-            }
-            else if (InstancePanel.Visible)
-            {
-                ExecuteInstanceAction(sender);
-                FilterInstances(null);
-                InstancePanel.Focus();
-            }
-            else if (RestorePanel.Visible)
-            {
-                ExecuteRestoreAction(sender);
-            }
-        }
-
-        private void LoadServerList()
-        {
-            try
-            {
-                const string serviceName = "SQL Server Browser";
-
-                bool isSQLBrowserRunning = new ServiceController(serviceName).Status == ServiceControllerStatus.Running;
-                StartSQLBrowserButton.Visible = !isSQLBrowserRunning;
-                StartSQLBrowserLabel.Visible = !isSQLBrowserRunning;
-                ServerNameComboBox.Items.Clear();
-
-                if (isSQLBrowserRunning)
-                {
-                    new Thread(new ThreadStart(delegate
-                    {
-                        Invoke((MethodInvoker)delegate
-                        {
-                            PXWait.StartWait(this);
-                            PXWait.ShowProgress(-1, "Discovering database servers...");
-
-                            foreach (DataRow serverRow in SmoApplication.EnumAvailableSqlServers(true).Rows)
-                            {
-                                ServerNameComboBox.Items.Add(serverRow.ItemArray[serverRow.Table.Columns.IndexOf(serverRow.Table.Columns["Server"])]);
-                            }
-
-                            if (ServerNameComboBox.Items.Count > 0)
-                            {
-                                ServerNameComboBox.Text = ServerNameComboBox.Items[0] as string;
-                            }
-
-                            PXWait.StopWait();
-                        });
-                    })).Start();
-                }
-                else
-                {
-                    ServerNameComboBox.Items.Add(Environment.MachineName);
-
-                    if (ServerNameComboBox.Items.Count > 0)
-                    {
-                        ServerNameComboBox.Text = ServerNameComboBox.Items[0] as string;
-                    }
-
-                    PXWait.StopWait();
-                }
-            }
-            catch (Exception ex)
-            {
-                if (PXWait.IsStarted || PXWait.IsShown)
-                {
-                    PXWait.StopWait();
-                }
-
-                SysData.ShowException(ex.Message, ErrorLevel.Error);
-            }
-        }
         #endregion
-
-        private void DatabaseListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (OverwriteDatabaseRadioButton.Checked && DatabaseListBox.SelectedItem != null)
-            {
-                DatabaseNameTextBox.Text = DatabaseListBox.SelectedItem as string;
-            }
-        }
-
-        private void StartSQLBrowserButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                new Thread(new ThreadStart(delegate
-                {
-                    Invoke((MethodInvoker)delegate
-                    {
-                        PXWait.StartWait(this);
-                        PXWait.ShowProgress(-1, "Starting SQL Server Browser...");
-
-                        const string serviceName = "SQL Server Browser";
-                        ServiceController sqlBrowser = new ServiceController(serviceName);
-                        ServiceController svc = new ServiceController(serviceName);
-                        ServiceHelper.ChangeStartMode(svc, System.ServiceProcess.ServiceStartMode.Automatic);
-
-                        if (sqlBrowser.Status != ServiceControllerStatus.Running)
-                        {
-                            sqlBrowser.Start();
-                            sqlBrowser.WaitForStatus(ServiceControllerStatus.Running);
-                        }
-
-                        LoadServerList();
-                    });
-                })).Start();
-            }
-            catch (Exception ex)
-            {
-                if (PXWait.IsStarted || PXWait.IsShown)
-                {
-                    PXWait.StopWait();
-                }
-
-                SysData.ShowException(ex.Message, ErrorLevel.Error);
-            }
-        }
-
-        private void Main_Load(object sender, EventArgs e)
-        {
-            LoadServerList();
-        }
     }
 }

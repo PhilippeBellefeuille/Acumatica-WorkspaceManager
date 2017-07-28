@@ -2,7 +2,9 @@
 using ConfigCore;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
+using PX.WebConfig;
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -19,9 +21,9 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         #region Public
         public static void RestoreInstance(ServerConnection serverConnection, Website website, string backupFilePath, string appPool, bool isDatabase, bool isWebsite)
         {
-            PXWait.ShowProgress(-1, "Extracting archive...");
+            PXWait.ShowProgress(-1, Messages.extractingArchiveProgress);
             string extractArchiveDirectory = Utility.GetTempDirectory();
-            string extractDatabasePath = Path.Combine(extractArchiveDirectory, "database.zip");
+            string extractDatabasePath = Path.Combine(extractArchiveDirectory, Constants.databaseArchiveFile);
 
             string extractDatabaseDirectory = Utility.GetTempDirectory();
             string extractWebsiteDirectory = Utility.GetTempDirectory();
@@ -35,21 +37,27 @@ namespace Acumatica.WorkspaceManager.BackupRestore
             {
                 if (!File.Exists(extractDatabasePath))
                 {
-                    throw new Exception("Database backup is missing from the archive.");
+                    throw new Exception(Messages.missingDatabaseError);
                 }
 
                 string backupFile = ExtractingDatabaseBackup(extractDatabasePath, extractDatabaseDirectory);
 
                 if (!string.IsNullOrWhiteSpace(backupFile))
                 {
-                    string dbName = website.Database.Substring(website.Database.IndexOf('/') + 1);
+                    string dbName = website.Database.Substring(website.Database.IndexOf(Constants.slash) + 1);
                     Server server = new Server(serverConnection);
+
+                    if (server == null)
+                    {
+                        throw new Exception(Messages.connectionError);
+                    }
+
                     RestoreDatabase(server, dbName, website, backupFile);
                     SetDBSecurity(server, dbName, appPool);
                 }
                 else
                 {
-                    throw new Exception("Can't extract database backup from the archive.");
+                    throw new Exception(Messages.databaseExtractingError);
                 }
             }
 
@@ -65,10 +73,10 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
         private static string ExtractingDatabaseBackup(string extractDatabasePath, string extractDatabaseDirectory)
         {
-            PXWait.ShowProgress(-1, "Extracting database backup...");
+            PXWait.ShowProgress(-1, Messages.extractingDatabaseProgress);
             ZipFile.ExtractToDirectory(extractDatabasePath, extractDatabaseDirectory);
 
-            string[] backupFiles = Directory.GetFiles(extractDatabaseDirectory, "*.bak", SearchOption.TopDirectoryOnly);
+            string[] backupFiles = Directory.GetFiles(extractDatabaseDirectory, Constants.backupFileFilter, SearchOption.TopDirectoryOnly);
 
             return backupFiles.Length > 0 ? backupFiles[0] : null;
         }
@@ -76,7 +84,7 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         private static void SetDBSecurity(Server server, string dbName, string appPool)
         {
             Login login = null;
-            string IISLogin = Path.Combine("IIS APPPOOL", appPool);
+            string IISLogin = Path.Combine(Constants.IISAppPoolUser, appPool);
 
             foreach (Login serverLogin in server.Logins)
             {
@@ -104,7 +112,7 @@ namespace Acumatica.WorkspaceManager.BackupRestore
                 {
                     if (schema.Name == appPool && schema.Owner == appPool)
                     {
-                        schema.Owner = "dbo";
+                        schema.Owner = Constants.defaultDBOwner;
                         schemaOwner = schema;
                         schema.Alter();
                         break;
@@ -126,17 +134,17 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         private static void RestoreWebsite(Website website, string appPool, string extractArchiveDirectory, string extractDatabaseDirectory, string extractWebsiteDirectory)
         {
             SiteTypes websiteType;
-            PXWait.ShowProgress(-1, "Extracting website files...");
-            string extractWebsitePath = Path.Combine(extractArchiveDirectory, Path.ChangeExtension(Enum.GetName(typeof(SiteTypes), SiteTypes.RegularSite), ".zip"));
+            PXWait.ShowProgress(-1, Messages.extractingWebsiteProgress);
+            string extractWebsitePath = Path.Combine(extractArchiveDirectory, Path.ChangeExtension(Enum.GetName(typeof(SiteTypes), SiteTypes.RegularSite), Constants.zipFileExtension));
 
             if (!File.Exists(extractWebsitePath))
             {
-                extractWebsitePath = Path.Combine(extractArchiveDirectory, Path.ChangeExtension(Enum.GetName(typeof(SiteTypes), SiteTypes.CompanyPortal), ".zip"));
+                extractWebsitePath = Path.Combine(extractArchiveDirectory, Path.ChangeExtension(Enum.GetName(typeof(SiteTypes), SiteTypes.CompanyPortal), Constants.zipFileExtension));
                 website.WebsiteType = Enum.GetName(typeof(SiteTypes), SiteTypes.CompanyPortal);
 
                 if (!File.Exists(extractWebsitePath))
                 {
-                    throw new Exception("Website files not found in backup archive.");
+                    throw new Exception(Messages.missingWebsiteError);
                 }
             }
             else
@@ -151,6 +159,7 @@ namespace Acumatica.WorkspaceManager.BackupRestore
                 CreateWebsite(website, appPool, websiteType);
                 MoveWebsiteFiles(website, extractWebsiteDirectory);
                 SetAccessRights(website);
+                UpdateWebConfig(website);
             }
 
             DeleteTempDirectory(extractArchiveDirectory, extractDatabaseDirectory, extractWebsiteDirectory);
@@ -172,12 +181,28 @@ namespace Acumatica.WorkspaceManager.BackupRestore
             File.Move(backupFile, backupFileLocation);
             SetBackupFileAccessRights(backupFileLocation);
             restore.Devices.AddDevice(backupFileLocation, DeviceType.File);
+
+            DataTable dtFileList = restore.ReadFileList(server);
+
+            foreach (DataRow row in dtFileList.Rows)
+            {
+                string dbLogicalName = row[0].ToString();
+                string dbPhysicalName = row[1].ToString();
+
+                //string logLogicalName = dtFileList.Rows[1][0].ToString();
+                //string logPhysicalName = dtFileList.Rows[1][1].ToString();
+
+                restore.RelocateFiles.Add(new RelocateFile(dbLogicalName, Path.ChangeExtension(Path.Combine(Path.GetDirectoryName(dbPhysicalName), dbName), Path.GetExtension(dbPhysicalName))));
+                //restore.RelocateFiles.Add(new RelocateFile(logLogicalName, dbPhysicalName));
+            }
+
+            restore.Action = RestoreActionType.Database;
             restore.Database = dbName;
             restore.NoRecovery = false;
 
             restore.PercentComplete += delegate (object sender, PercentCompleteEventArgs e)
             {
-                PXWait.ShowProgress(e.Percent, string.Format("Restoring database backup: {0}%", Convert.ToString(e.Percent, CultureInfo.InvariantCulture)));
+                PXWait.ShowProgress(e.Percent, string.Format(Messages.restoringDatabaseProgress, Convert.ToString(e.Percent, CultureInfo.InvariantCulture)));
             };
 
             restore.SqlRestore(server);
@@ -187,14 +212,14 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         {
             if (server.Databases.Contains(dbName))
             {
-                PXWait.ShowProgress(-1, "Dropping existing database...");
+                PXWait.ShowProgress(-1, Messages.droppingDatabaseProgress);
                 server.KillDatabase(dbName);
             }
         }
 
         private static void CreateWebsite(Website website, string appPool, SiteTypes websiteType)
         {
-            PXWait.ShowProgress(-1, "Creating new website...");
+            PXWait.ShowProgress(-1, Messages.creatingWebsiteProgress);
             CreateWebsiteDirectory(website);
             VirtSiteInfo virtSiteInfo = new VirtSiteInfo(website.InstanceName, websiteType, website.WebsiteName, website.VirtualDirectory, website.SitePath, false);
             virtSiteInfo.IISInfo.AppPool = new IISPoolInfo(appPool);
@@ -203,12 +228,12 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
         private static void CreateWebsiteDirectory(Website website)
         {
-            string exeLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string exeLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
             foreach (string directory in new string[]
                                          {
-                                             Path.Combine(exeLocation, "Files"),
-                                             Path.Combine(exeLocation, "Portal"),
+                                             Path.Combine(exeLocation, Constants.filesDirectory),
+                                             Path.Combine(exeLocation, Constants.portalDirectory),
                                              website.SitePath
                                          })
             {
@@ -223,18 +248,18 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
         private static void MoveWebsiteFiles(Website website, string extractWebsiteDirectory)
         {
-            PXWait.ShowProgress(-1, "Restoring website files...");
+            PXWait.ShowProgress(-1, Messages.restoringWebsiteProgress);
             MoveDirectory(extractWebsiteDirectory, website.SitePath);
         }
 
         private static void SetAccessRights(Website website)
         {
-            PXWait.ShowProgress(-1, "Setting access rights...");
+            PXWait.ShowProgress(-1, Messages.setAccessRightsProgress);
 
             Process.Start(new ProcessStartInfo()
             {
                 Arguments = string.Format("\"{0}\" /reset /T /C", website.SitePath),
-                FileName = "icacls",
+                FileName = Constants.icacls,
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden
             }).WaitForExit();
@@ -247,6 +272,19 @@ namespace Acumatica.WorkspaceManager.BackupRestore
             DeleteDirectory(extractWebsiteDirectory);
         }
 
+        private static void UpdateWebConfig(Website website)
+        {
+            string configFile = Path.Combine(website.SitePath, Constants.webConfigFilename);
+            string dbServer = website.Database.Substring(0, website.Database.IndexOf(Constants.slash));
+            string dbName = website.Database.Substring(website.Database.IndexOf(Constants.slash) + 1);
+
+            using (WebConfiguration webConfiguration = new WebConfiguration(configFile, false))
+            {
+                webConfiguration.ConnectionString.SetValue(string.Format(Constants.connectionString, dbServer, dbName));
+                webConfiguration.CreateAppSetting(Constants.snapshotsAppSetting, Path.Combine(Directory.GetParent(website.SitePath).FullName, Constants.snapshotsDirectory, website.InstanceName));
+            }
+        }
+
         private static void DeleteDirectory(string folder)
         {
             if (Directory.Exists(folder))
@@ -256,7 +294,7 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         }
         #endregion Public
 
-            #region Private
+        #region Private
         private static User CreateDBUser(string appPool, Server server, string dbName, Login login)
         {
             User user = new User(server.Databases[dbName], appPool);
@@ -283,16 +321,12 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
         public static void MoveDirectory(string source, string target)
         {
-            const string allFiles = "*";
-            const char backslash = '\\';
-            const char space = ' ';
-
             // Remove trailing backslash
-            string sourcePath = source.TrimEnd(backslash, space);
-            string targetPath = target.TrimEnd(backslash, space);
+            string sourcePath = source.TrimEnd(Constants.backslash, Constants.space);
+            string targetPath = target.TrimEnd(Constants.backslash, Constants.space);
 
             // Copy files to target directory
-            foreach (IGrouping<string, string> folder in Directory.EnumerateFiles(sourcePath, allFiles, SearchOption.AllDirectories).GroupBy(s => Path.GetDirectoryName(s)))
+            foreach (IGrouping<string, string> folder in Directory.EnumerateFiles(sourcePath, Constants.allFiles, SearchOption.AllDirectories).GroupBy(s => Path.GetDirectoryName(s)))
             {
                 string targetFolder = folder.Key.Replace(sourcePath, targetPath);
 
@@ -343,9 +377,9 @@ namespace Acumatica.WorkspaceManager.BackupRestore
         {
             foreach (string dbRole in new string[]
                                       {
-                                                      "db_datareader",
-                                                      "db_datawriter",
-                                                      "db_backupoperator"
+                                          Constants.dataReaderSecurity,
+                                          Constants.dataWriterSecurity,
+                                          Constants.backupSecurity
                                       })
             {
                 if (!database.Roles[dbRole].EnumMembers().Contains(appPool))

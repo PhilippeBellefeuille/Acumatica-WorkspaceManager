@@ -38,23 +38,23 @@ namespace Acumatica.WorkspaceManager
                     Color errorTextColor = Color.DarkRed;
                     Color successTextColor = Color.Black;
 
-                    if (e.ColumnIndex == InstanceDataGridView.Columns["InstanceStatus"].Index)
+                    if (e.ColumnIndex == InstanceDataGridView.Columns[Constants.instanceStatusColumn].Index)
                     {
                         FormatInstanceCellStatus(e, row, website, errorTextColor, warningColor, successTextColor);
                     }
-                    else if (e.ColumnIndex == InstanceDataGridView.Columns["Database"].Index)
+                    else if (e.ColumnIndex == InstanceDataGridView.Columns[Constants.databaseColumn].Index)
                     {
                         FormatInstanceCellDatabase(e, row, website, errorColor, warningColor, successColor);
                     }
-                    else if (e.ColumnIndex == InstanceDataGridView.Columns["SitePath"].Index)
+                    else if (e.ColumnIndex == InstanceDataGridView.Columns[Constants.sitePathColumn].Index)
                     {
                         FormatInstanceCellSitePath(e, row, website, errorColor, warningColor, successColor);
                     }
-                    else if (e.ColumnIndex == InstanceDataGridView.Columns["SiteVersion"].Index)
+                    else if (e.ColumnIndex == InstanceDataGridView.Columns[Constants.siteVersionColumn].Index)
                     {
                         FormatInstanceCellSiteVersion(e, row, website, errorColor, warningColor, successColor);
                     }
-                    else if (e.ColumnIndex == InstanceDataGridView.Columns["DBVersion"].Index)
+                    else if (e.ColumnIndex == InstanceDataGridView.Columns[Constants.dbVersionColumn].Index)
                     {
                         FormatInstanceCellDBVersion(e, row, website, errorColor, warningColor, successColor);
                     }
@@ -70,18 +70,18 @@ namespace Acumatica.WorkspaceManager
             if (e.Value == null)
             {
                 e.CellStyle.BackColor = errorColor;
-                e.Value = "Can't get version.";
-                row.Cells["DBVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                e.Value = Messages.versionFetchError;
+                row.Cells[Constants.dbVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
             }
             else if (website.SiteVersion != website.DBVersion)
             {
                 e.CellStyle.BackColor = warningColor;
-                row.Cells["DBVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                row.Cells[Constants.dbVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
             else
             {
                 e.CellStyle.BackColor = successColor;
-                row.Cells["DBVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                row.Cells[Constants.dbVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
         }
 
@@ -90,46 +90,43 @@ namespace Acumatica.WorkspaceManager
             if (e.Value == null)
             {
                 e.CellStyle.BackColor = errorColor;
-                e.Value = "Can't get version.";
-                row.Cells["SiteVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                e.Value = Messages.versionFetchError;
+                row.Cells[Constants.siteVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
             }
             else if (website.SiteVersion != website.DBVersion)
             {
                 e.CellStyle.BackColor = warningColor;
-                row.Cells["SiteVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                row.Cells[Constants.siteVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
             else
             {
                 e.CellStyle.BackColor = successColor;
-                row.Cells["SiteVersion"].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                row.Cells[Constants.siteVersionColumn].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
         }
 
         private void FormatInstanceCellSitePath(DataGridViewCellFormattingEventArgs e, DataGridViewRow row, Website website, Color errorColor, Color warningColor, Color successColor)
         {
-            if (e.Value == null /*|| !Directory.Exists(e.Value as string)*/)
+            if (e.Value == null)
             {
                 e.CellStyle.BackColor = errorColor;
-                e.Value = "Can't find site directory.";
-                row.Cells["SitePath"].ToolTipText = "Can't find site directory.";
+                e.Value = Messages.sitePathError;
             }
             else
             {
                 e.CellStyle.BackColor = successColor;
-                row.Cells["SitePath"].ToolTipText = string.Empty;
+                row.Cells[Constants.sitePathColumn].ToolTipText = string.Empty;
             }
         }
 
         private void FormatInstanceCellDatabase(DataGridViewCellFormattingEventArgs e, DataGridViewRow row, Website website, Color errorColor, Color warningColor, Color successColor)
         {
-            const string MSSQLServerType = "MSSQLSERVER";
-
             if (e.Value == null)
             {
                 e.CellStyle.BackColor = errorColor;
-                e.Value = "Can't read web.config file.";
+                e.Value = Messages.webConfigError;
             }
-            else if (website.ServerType != null && website.ServerType.ToUpperInvariant().Trim() != MSSQLServerType)
+            else if (website.ServerType != null && website.ServerType.ToUpperInvariant().Trim() != Constants.MSSQLServerType)
             {
                 e.CellStyle.BackColor = errorColor;
             }
@@ -141,43 +138,42 @@ namespace Acumatica.WorkspaceManager
 
         private void FormatInstanceCellStatus(DataGridViewCellFormattingEventArgs e, DataGridViewRow row, Website website, Color errorTextColor, Color warningColor, Color successTextColor)
         {
-            const string MSSQLServerType = "MSSQLSERVER";
             bool isSameVersion = (website.SiteVersion != null && website.SiteVersion == website.DBVersion);
             bool isDatabase = (website.Database != null);
             bool isWebConfig = (website.Database != null);
             bool isSiteVersion = (website.SiteVersion != null);
             bool isDBVersion = (website.DBVersion != null);
-            bool isMSSql = (website.ServerType != null && website.ServerType.ToUpperInvariant().Trim() == MSSQLServerType);
+            bool isMSSql = (website.ServerType != null && website.ServerType.ToUpperInvariant().Trim() == Constants.MSSQLServerType);
 
             if (!isWebConfig || !isSiteVersion || !isDBVersion || !isDatabase || !isMSSql)
             {
-                e.Value = StatusImageList.Images["error"];
+                e.Value = StatusImageList.Images[Constants.errorImage];
 
                 foreach (DataGridViewCell cell in row.Cells)
                 {
                     cell.Style.ForeColor = errorTextColor;
 
                     if (!isWebConfig || !isDatabase)
-                        cell.ToolTipText = "Can't read web.config file.";
+                        cell.ToolTipText = Messages.webConfigError;
                     else if (!isMSSql)
-                        cell.ToolTipText = string.Concat("Can't backup/restore ", website.ServerType, " databases.");
+                        cell.ToolTipText = string.Format(Messages.serverTypeError, website.ServerType);
                     else if (!isSiteVersion || !isDBVersion)
-                        cell.ToolTipText = "Can't get version.";
+                        cell.ToolTipText = Messages.versionFetchError;
                 }
             }
             else if (!isSameVersion)
             {
-                e.Value = StatusImageList.Images["warning"];
+                e.Value = StatusImageList.Images[Constants.warningImage];
 
                 foreach (DataGridViewCell cell in row.Cells)
                 {
                     cell.Style.ForeColor = successTextColor;
-                    cell.ToolTipText = "Database version doesn't coincide with the site's version.";
+                    cell.ToolTipText = Messages.versionMismatchError;
                 }
             }
             else
             {
-                e.Value = StatusImageList.Images["success"];
+                e.Value = StatusImageList.Images[Constants.successImage];
 
                 foreach (DataGridViewCell cell in row.Cells)
                 {
@@ -189,6 +185,7 @@ namespace Acumatica.WorkspaceManager
 
         #endregion
 
+        #region Methods
         private void EnableInstanceControls(Website website)
         {
             bool isInstance = (website != null);
@@ -364,13 +361,13 @@ namespace Acumatica.WorkspaceManager
             }
             catch (Exception ex)
             {
-                SysData.ShowException(ex.Message, ErrorLevel.Error);
+                PXWait.StopWait();
+                SysData.ShowException(ex.ToString(), ErrorLevel.Error);
             }
         }
 
         private List<Website> GetInstances()
         {
-            const string registryKey = @"SOFTWARE\Acumatica ERP";
             List<Website> websites = new List<Website>();
 
             foreach (RegistryView registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
@@ -379,7 +376,7 @@ namespace Acumatica.WorkspaceManager
 
                 if (baseKey != null)
                 {
-                    RegistryKey key = baseKey.OpenSubKey(registryKey, RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey);
+                    RegistryKey key = baseKey.OpenSubKey(Constants.acumaticaRegistryKey, RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey);
 
                     if (key != null)
                     {
@@ -395,16 +392,16 @@ namespace Acumatica.WorkspaceManager
 
                             if (subKey != null)
                             {
-                                string path = subKey.GetValue("Path") as string;
-                                string configFile = Path.Combine(path, "web.config");
-                                string virtualDirectory = subKey.GetValue("VirtDirName") as string;
-                                string websiteName = subKey.GetValue("WebSiteName") as string;
-                                string websiteType = subKey.GetValue("Type") as string;
+                                string path = subKey.GetValue(Constants.pathRegistryValue) as string;
+                                string configFile = Path.Combine(path, Constants.webConfigFilename);
+                                string virtualDirectory = subKey.GetValue(Constants.virtualDirectoryRegistryValue) as string;
+                                string websiteName = subKey.GetValue(Constants.webSiteNameRegistryValue) as string;
+                                string websiteType = subKey.GetValue(Constants.typeRegistryValue) as string;
 
                                 ServerManager server = new ServerManager();
                                 SiteCollection sites = server.Sites;
                                 Site site = sites[websiteName];
-                                Microsoft.Web.Administration.Application application = site.Applications[string.Concat("/", virtualDirectory)];
+                                Microsoft.Web.Administration.Application application = site.Applications[string.Concat(Constants.slash, virtualDirectory)];
 
                                 foreach (Microsoft.Web.Administration.Binding binding in site.Bindings)
                                 {
@@ -449,17 +446,17 @@ namespace Acumatica.WorkspaceManager
                                             continue;
                                         }
 
-                                        WebConfiguration wm = new WebConfiguration(configFile, true);
-                                        DbmsProviderService ServerType = ProviderLocator.GetProviderByPxDataProviderClassName(wm.DatabaseProvider);
+                                        WebConfiguration webConfiguration = new WebConfiguration(configFile, true);
+                                        DbmsProviderService ServerType = ProviderLocator.GetProviderByPxDataProviderClassName(webConfiguration.DatabaseProvider);
 
-                                        ConnectionDefinition connection = DatabaseProvider.ParseConnectionString(DatabaseProvider.GetProvider(ServerType.name), wm.ConnectionString);
-                                        DBInfo DatabaseInfo = DBInfo.DatabaseTest(connection);
+                                        ConnectionDefinition connection = DatabaseProvider.ParseConnectionString(DatabaseProvider.GetProvider(ServerType.name), webConfiguration.ConnectionString);
+                                        DBInfo databaseInfo = DBInfo.DatabaseTest(connection);
 
                                         websites.Add(new Website(subKeyName,
                                                                  virtualDirectory,
-                                                                 string.Concat(connection.Server, "/", connection.Database),
-                                                                 wm.Version,
-                                                                 DatabaseInfo.GetVersion(),
+                                                                 string.Concat(connection.Server, Constants.slash, connection.Database),
+                                                                 webConfiguration.Version,
+                                                                 databaseInfo.GetVersion(),
                                                                  path,
                                                                  url.ToString(),
                                                                  ServerType.name.ToUpperInvariant(),
@@ -467,9 +464,8 @@ namespace Acumatica.WorkspaceManager
                                                                  websiteName));
 
                                         PXWait.ShowProgress((int)(((float)counter / total) * 100f),
-                                                            string.Concat("Scanning instances: ",
+                                                            string.Format(Messages.scanningInstancesProgress,
                                                                           Convert.ToString(++counter, CultureInfo.InvariantCulture).PadLeft(totalDigitCount),
-                                                                          "/",
                                                                           Convert.ToString(total, CultureInfo.InvariantCulture)));
                                     }
                                 }
@@ -487,7 +483,7 @@ namespace Acumatica.WorkspaceManager
             return InstanceDataGridView.SelectedRows.Count > 0 &&
                    InstanceDataGridView.SelectedRows[0].Visible ? InstanceDataGridView.SelectedRows[0].DataBoundItem as Website : null;
         }
-
+        
         private void ReloadInstance(string selectedInstance)
         {
             new Thread(new ThreadStart(delegate
@@ -511,15 +507,12 @@ namespace Acumatica.WorkspaceManager
                     }
                     catch (Exception ex)
                     {
-                        if (PXWait.IsStarted || PXWait.IsShown)
-                        {
-                            PXWait.StopWait();
-                        }
-
-                        SysData.ShowException(ex.Message, ErrorLevel.Error);
+                        PXWait.StopWait();
+                        SysData.ShowException(ex.ToString(), ErrorLevel.Error);
                     }
                 });
             })).Start();
         }
+        #endregion
     }
 }

@@ -17,7 +17,7 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
                 if (Enum.TryParse(website.WebsiteType, out websiteType))
                 {
-                    PXWait.ShowProgress(-1, "Deleting website...");
+                    PXWait.ShowProgress(-1, Messages.deletingWebsiteProgress);
                     SitesManagment.DeleteSite(new VirtSiteInfo(website.InstanceName,
                                                                websiteType,
                                                                website.WebsiteName,
@@ -33,18 +33,20 @@ namespace Acumatica.WorkspaceManager.BackupRestore
 
             if (isDatabase)
             {
-                string dbServer = website.Database.Substring(0, website.Database.IndexOf('/'));
+                string dbServer = website.Database.Substring(0, website.Database.IndexOf(Constants.slash));
                 string dbName = website.Database.Substring(website.Database.IndexOf('/') + 1);
 
                 Server server = new Server(new ServerConnection(dbServer));
                 Database db = default(Database);
 
-                if (server.Databases.Contains(dbName))
+                if (server == null || !server.Databases.Contains(dbName))
                 {
-                    PXWait.ShowProgress(-1, "Deleting database...");
-                    db = server.Databases[dbName];
-                    server.KillDatabase(dbName);
+                    throw new Exception(Messages.connectionError);
                 }
+                
+                PXWait.ShowProgress(-1, Messages.deletingDatabaseProgress);
+                db = server.Databases[dbName];
+                server.KillDatabase(dbName);
             }
         }
     }

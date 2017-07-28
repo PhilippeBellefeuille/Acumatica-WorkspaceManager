@@ -81,8 +81,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.DatabasePasswordTextBox = new System.Windows.Forms.TextBox();
             this.StartSQLBrowserButton = new System.Windows.Forms.Button();
+            this.StatusImageList = new System.Windows.Forms.ImageList(this.components);
             this.WindowsAuthRadioButton = new System.Windows.Forms.RadioButton();
-            this.StartSQLBrowserLabel = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.ServerNameComboBox = new System.Windows.Forms.ComboBox();
             this.SQLServerAuthRadioButton = new System.Windows.Forms.RadioButton();
@@ -131,7 +131,6 @@
             this.SitePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Url = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.InstanceBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.StatusImageList = new System.Windows.Forms.ImageList(this.components);
             this.RestorePanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.DatabaseSettingsPanel = new System.Windows.Forms.Panel();
@@ -230,7 +229,7 @@
             this.PackageDataGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PackageDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.PackageDataGridView.Size = new System.Drawing.Size(1050, 814);
-            this.PackageDataGridView.TabIndex = 0;
+            this.PackageDataGridView.TabIndex = 2;
             this.PackageDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.PackageDataGridView_CellFormatting);
             this.PackageDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DataGridView_KeyPress);
             // 
@@ -377,7 +376,7 @@
             this.PackageVersionMaskedTextBox.Mask = "9.99.9999";
             this.PackageVersionMaskedTextBox.Name = "PackageVersionMaskedTextBox";
             this.PackageVersionMaskedTextBox.Size = new System.Drawing.Size(112, 26);
-            this.PackageVersionMaskedTextBox.TabIndex = 1003;
+            this.PackageVersionMaskedTextBox.TabIndex = 4;
             this.PackageVersionMaskedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.PackageVersionMaskedTextBox.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
             this.PackageVersionMaskedTextBox.TextChanged += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -393,7 +392,7 @@
             this.InstallButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.InstallButton.Name = "InstallButton";
             this.InstallButton.Size = new System.Drawing.Size(148, 40);
-            this.InstallButton.TabIndex = 1004;
+            this.InstallButton.TabIndex = 9;
             this.InstallButton.Text = "&Install";
             this.InstallButton.UseVisualStyleBackColor = true;
             this.InstallButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -409,7 +408,7 @@
             this.DownloadButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.DownloadButton.Name = "DownloadButton";
             this.DownloadButton.Size = new System.Drawing.Size(148, 40);
-            this.DownloadButton.TabIndex = 1005;
+            this.DownloadButton.TabIndex = 8;
             this.DownloadButton.Text = "&Download";
             this.DownloadButton.UseVisualStyleBackColor = true;
             this.DownloadButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -425,7 +424,7 @@
             this.UninstallButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.UninstallButton.Name = "UninstallButton";
             this.UninstallButton.Size = new System.Drawing.Size(148, 40);
-            this.UninstallButton.TabIndex = 1006;
+            this.UninstallButton.TabIndex = 12;
             this.UninstallButton.Text = "&Uninstall";
             this.UninstallButton.UseVisualStyleBackColor = true;
             this.UninstallButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -439,7 +438,7 @@
             this.ShowRemoteCheckBox.Location = new System.Drawing.Point(472, 924);
             this.ShowRemoteCheckBox.Name = "ShowRemoteCheckBox";
             this.ShowRemoteCheckBox.Size = new System.Drawing.Size(136, 24);
-            this.ShowRemoteCheckBox.TabIndex = 1007;
+            this.ShowRemoteCheckBox.TabIndex = 5;
             this.ShowRemoteCheckBox.Text = "Show Remote";
             this.ShowRemoteCheckBox.UseVisualStyleBackColor = true;
             this.ShowRemoteCheckBox.CheckedChanged += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -453,7 +452,7 @@
             this.ShowLocalCheckBox.Location = new System.Drawing.Point(472, 959);
             this.ShowLocalCheckBox.Name = "ShowLocalCheckBox";
             this.ShowLocalCheckBox.Size = new System.Drawing.Size(117, 24);
-            this.ShowLocalCheckBox.TabIndex = 1008;
+            this.ShowLocalCheckBox.TabIndex = 6;
             this.ShowLocalCheckBox.Text = "Show Local";
             this.ShowLocalCheckBox.UseVisualStyleBackColor = true;
             this.ShowLocalCheckBox.CheckedChanged += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -469,7 +468,7 @@
             this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OpenFolderButton.Name = "OpenFolderButton";
             this.OpenFolderButton.Size = new System.Drawing.Size(148, 40);
-            this.OpenFolderButton.TabIndex = 1009;
+            this.OpenFolderButton.TabIndex = 13;
             this.OpenFolderButton.Text = "&Open Folder";
             this.OpenFolderButton.UseVisualStyleBackColor = true;
             this.OpenFolderButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -485,7 +484,7 @@
             this.LaunchButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LaunchButton.Name = "LaunchButton";
             this.LaunchButton.Size = new System.Drawing.Size(148, 40);
-            this.LaunchButton.TabIndex = 1010;
+            this.LaunchButton.TabIndex = 10;
             this.LaunchButton.Text = "&Open Wizard";
             this.LaunchButton.UseVisualStyleBackColor = true;
             this.LaunchButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -503,7 +502,7 @@
             this.AcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.AcumaticaLinkLabel.Name = "AcumaticaLinkLabel";
             this.AcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
-            this.AcumaticaLinkLabel.TabIndex = 1001;
+            this.AcumaticaLinkLabel.TabIndex = 14;
             this.AcumaticaLinkLabel.TabStop = true;
             this.AcumaticaLinkLabel.Text = "http://www.acumatica.com";
             this.AcumaticaLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
@@ -519,7 +518,7 @@
             this.RemoveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RemoveButton.Name = "RemoveButton";
             this.RemoveButton.Size = new System.Drawing.Size(148, 40);
-            this.RemoveButton.TabIndex = 1011;
+            this.RemoveButton.TabIndex = 11;
             this.RemoveButton.Text = "&Remove Local";
             this.RemoveButton.UseVisualStyleBackColor = true;
             this.RemoveButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -533,7 +532,7 @@
             this.ShowInstalledCheckBox.Location = new System.Drawing.Point(472, 991);
             this.ShowInstalledCheckBox.Name = "ShowInstalledCheckBox";
             this.ShowInstalledCheckBox.Size = new System.Drawing.Size(139, 24);
-            this.ShowInstalledCheckBox.TabIndex = 1012;
+            this.ShowInstalledCheckBox.TabIndex = 7;
             this.ShowInstalledCheckBox.Text = "Show Installed";
             this.ShowInstalledCheckBox.UseVisualStyleBackColor = true;
             this.ShowInstalledCheckBox.CheckedChanged += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -605,7 +604,7 @@
             this.PackageBackButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.PackageBackButton.Name = "PackageBackButton";
             this.PackageBackButton.Size = new System.Drawing.Size(148, 40);
-            this.PackageBackButton.TabIndex = 1014;
+            this.PackageBackButton.TabIndex = 3;
             this.PackageBackButton.Text = "◀  &Back";
             this.PackageBackButton.UseVisualStyleBackColor = true;
             this.PackageBackButton.Click += new System.EventHandler(this.BackButton_Click);
@@ -620,7 +619,7 @@
             this.PackageReloadButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.PackageReloadButton.Name = "PackageReloadButton";
             this.PackageReloadButton.Size = new System.Drawing.Size(148, 40);
-            this.PackageReloadButton.TabIndex = 2;
+            this.PackageReloadButton.TabIndex = 1;
             this.PackageReloadButton.Text = "&Reload the list";
             this.PackageReloadButton.UseVisualStyleBackColor = true;
             this.PackageReloadButton.Click += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -677,7 +676,7 @@
             this.PackageMenuLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.PackageMenuLinkLabel.Name = "PackageMenuLinkLabel";
             this.PackageMenuLinkLabel.Size = new System.Drawing.Size(391, 29);
-            this.PackageMenuLinkLabel.TabIndex = 1;
+            this.PackageMenuLinkLabel.TabIndex = 6;
             this.PackageMenuLinkLabel.TabStop = true;
             this.PackageMenuLinkLabel.Text = "Perform Workspace Maintenance";
             this.PackageMenuLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MenuItem_LinkClicked);
@@ -694,7 +693,7 @@
             this.BackupRestoreMenuLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BackupRestoreMenuLinkLabel.Name = "BackupRestoreMenuLinkLabel";
             this.BackupRestoreMenuLinkLabel.Size = new System.Drawing.Size(427, 29);
-            this.BackupRestoreMenuLinkLabel.TabIndex = 2;
+            this.BackupRestoreMenuLinkLabel.TabIndex = 7;
             this.BackupRestoreMenuLinkLabel.TabStop = true;
             this.BackupRestoreMenuLinkLabel.Text = "Perform Backup, Restore and Delete";
             this.BackupRestoreMenuLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MenuItem_LinkClicked);
@@ -732,7 +731,6 @@
             this.panel1.Controls.Add(this.DatabasePasswordTextBox);
             this.panel1.Controls.Add(this.StartSQLBrowserButton);
             this.panel1.Controls.Add(this.WindowsAuthRadioButton);
-            this.panel1.Controls.Add(this.StartSQLBrowserLabel);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.ServerNameComboBox);
             this.panel1.Controls.Add(this.SQLServerAuthRadioButton);
@@ -755,21 +753,33 @@
             this.DatabasePasswordTextBox.Name = "DatabasePasswordTextBox";
             this.DatabasePasswordTextBox.PasswordChar = '*';
             this.DatabasePasswordTextBox.Size = new System.Drawing.Size(194, 26);
-            this.DatabasePasswordTextBox.TabIndex = 1028;
+            this.DatabasePasswordTextBox.TabIndex = 5;
             // 
             // StartSQLBrowserButton
             // 
             this.StartSQLBrowserButton.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StartSQLBrowserButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.StartSQLBrowserButton.ImageList = this.StatusImageList;
             this.StartSQLBrowserButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.StartSQLBrowserButton.Location = new System.Drawing.Point(386, 46);
             this.StartSQLBrowserButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.StartSQLBrowserButton.Name = "StartSQLBrowserButton";
-            this.StartSQLBrowserButton.Size = new System.Drawing.Size(184, 40);
-            this.StartSQLBrowserButton.TabIndex = 1041;
-            this.StartSQLBrowserButton.Text = "Start SQL Browser";
+            this.StartSQLBrowserButton.Size = new System.Drawing.Size(148, 40);
+            this.StartSQLBrowserButton.TabIndex = 1;
+            this.StartSQLBrowserButton.Text = "Validate";
+            this.StartSQLBrowserButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.StartSQLBrowserButton.UseVisualStyleBackColor = true;
             this.StartSQLBrowserButton.Click += new System.EventHandler(this.StartSQLBrowserButton_Click);
+            // 
+            // StatusImageList
+            // 
+            this.StatusImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("StatusImageList.ImageStream")));
+            this.StatusImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.StatusImageList.Images.SetKeyName(0, "success");
+            this.StatusImageList.Images.SetKeyName(1, "warning");
+            this.StatusImageList.Images.SetKeyName(2, "error");
+            this.StatusImageList.Images.SetKeyName(3, "remote");
+            this.StatusImageList.Images.SetKeyName(4, "local");
             // 
             // WindowsAuthRadioButton
             // 
@@ -782,22 +792,10 @@
             this.WindowsAuthRadioButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.WindowsAuthRadioButton.Name = "WindowsAuthRadioButton";
             this.WindowsAuthRadioButton.Size = new System.Drawing.Size(242, 27);
-            this.WindowsAuthRadioButton.TabIndex = 1025;
+            this.WindowsAuthRadioButton.TabIndex = 2;
             this.WindowsAuthRadioButton.TabStop = true;
             this.WindowsAuthRadioButton.Text = "Windows Authentication";
             this.WindowsAuthRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // StartSQLBrowserLabel
-            // 
-            this.StartSQLBrowserLabel.AutoSize = true;
-            this.StartSQLBrowserLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.StartSQLBrowserLabel.ForeColor = System.Drawing.Color.Black;
-            this.StartSQLBrowserLabel.Location = new System.Drawing.Point(577, 53);
-            this.StartSQLBrowserLabel.Name = "StartSQLBrowserLabel";
-            this.StartSQLBrowserLabel.Size = new System.Drawing.Size(476, 25);
-            this.StartSQLBrowserLabel.TabIndex = 1034;
-            this.StartSQLBrowserLabel.Text = "*server name discovery requires SQL Server Browser";
-            this.StartSQLBrowserLabel.Visible = false;
             // 
             // label5
             // 
@@ -819,7 +817,7 @@
             this.ServerNameComboBox.Location = new System.Drawing.Point(179, 51);
             this.ServerNameComboBox.Name = "ServerNameComboBox";
             this.ServerNameComboBox.Size = new System.Drawing.Size(200, 28);
-            this.ServerNameComboBox.TabIndex = 1033;
+            this.ServerNameComboBox.TabIndex = 0;
             // 
             // SQLServerAuthRadioButton
             // 
@@ -831,7 +829,7 @@
             this.SQLServerAuthRadioButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SQLServerAuthRadioButton.Name = "SQLServerAuthRadioButton";
             this.SQLServerAuthRadioButton.Size = new System.Drawing.Size(265, 27);
-            this.SQLServerAuthRadioButton.TabIndex = 1026;
+            this.SQLServerAuthRadioButton.TabIndex = 3;
             this.SQLServerAuthRadioButton.Text = "SQL Server Authentication";
             this.SQLServerAuthRadioButton.UseVisualStyleBackColor = true;
             this.SQLServerAuthRadioButton.CheckedChanged += new System.EventHandler(this.SQLServerAuthRadioButton_CheckedChanged);
@@ -886,7 +884,7 @@
             this.DatabaseLoginTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.DatabaseLoginTextBox.Name = "DatabaseLoginTextBox";
             this.DatabaseLoginTextBox.Size = new System.Drawing.Size(194, 26);
-            this.DatabaseLoginTextBox.TabIndex = 1027;
+            this.DatabaseLoginTextBox.TabIndex = 4;
             // 
             // MenuAcumaticaPictureBox
             // 
@@ -917,7 +915,7 @@
             this.MenuAcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MenuAcumaticaLinkLabel.Name = "MenuAcumaticaLinkLabel";
             this.MenuAcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
-            this.MenuAcumaticaLinkLabel.TabIndex = 1002;
+            this.MenuAcumaticaLinkLabel.TabIndex = 8;
             this.MenuAcumaticaLinkLabel.TabStop = true;
             this.MenuAcumaticaLinkLabel.Text = "http://www.acumatica.com";
             this.MenuAcumaticaLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
@@ -968,7 +966,7 @@
             this.OpenWebsiteButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OpenWebsiteButton.Name = "OpenWebsiteButton";
             this.OpenWebsiteButton.Size = new System.Drawing.Size(148, 40);
-            this.OpenWebsiteButton.TabIndex = 1042;
+            this.OpenWebsiteButton.TabIndex = 8;
             this.OpenWebsiteButton.Text = "&Open Website";
             this.OpenWebsiteButton.UseVisualStyleBackColor = true;
             this.OpenWebsiteButton.Click += new System.EventHandler(this.ActionControl_Click);
@@ -979,7 +977,7 @@
             this.InstanceNameFilterTextBox.Location = new System.Drawing.Point(401, 924);
             this.InstanceNameFilterTextBox.Name = "InstanceNameFilterTextBox";
             this.InstanceNameFilterTextBox.Size = new System.Drawing.Size(195, 26);
-            this.InstanceNameFilterTextBox.TabIndex = 1041;
+            this.InstanceNameFilterTextBox.TabIndex = 4;
             this.InstanceNameFilterTextBox.TextChanged += new System.EventHandler(this.ReloadControl_EventHandler);
             // 
             // BackupRestoreAcumaticaPictureBox
@@ -1008,7 +1006,7 @@
             this.InstanceBackButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.InstanceBackButton.Name = "InstanceBackButton";
             this.InstanceBackButton.Size = new System.Drawing.Size(148, 40);
-            this.InstanceBackButton.TabIndex = 1040;
+            this.InstanceBackButton.TabIndex = 3;
             this.InstanceBackButton.Text = "◀  &Back";
             this.InstanceBackButton.UseVisualStyleBackColor = true;
             this.InstanceBackButton.Click += new System.EventHandler(this.BackButton_Click);
@@ -1051,7 +1049,7 @@
             this.InstanceRestoreButton.Menu = this.InstanceRestoreContextMenuStrip;
             this.InstanceRestoreButton.Name = "InstanceRestoreButton";
             this.InstanceRestoreButton.Size = new System.Drawing.Size(148, 40);
-            this.InstanceRestoreButton.TabIndex = 1011;
+            this.InstanceRestoreButton.TabIndex = 6;
             this.InstanceRestoreButton.Text = "&Restore";
             this.InstanceRestoreButton.UseVisualStyleBackColor = true;
             // 
@@ -1104,7 +1102,7 @@
             this.InstanceDeleteButton.Menu = this.InstanceDeleteContextMenuStrip;
             this.InstanceDeleteButton.Name = "InstanceDeleteButton";
             this.InstanceDeleteButton.Size = new System.Drawing.Size(148, 40);
-            this.InstanceDeleteButton.TabIndex = 1010;
+            this.InstanceDeleteButton.TabIndex = 7;
             this.InstanceDeleteButton.Text = "&Delete";
             this.InstanceDeleteButton.UseVisualStyleBackColor = true;
             // 
@@ -1172,7 +1170,7 @@
             this.InstanceReloadButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.InstanceReloadButton.Name = "InstanceReloadButton";
             this.InstanceReloadButton.Size = new System.Drawing.Size(148, 40);
-            this.InstanceReloadButton.TabIndex = 121;
+            this.InstanceReloadButton.TabIndex = 1;
             this.InstanceReloadButton.Text = "&Reload the list";
             this.InstanceReloadButton.UseVisualStyleBackColor = true;
             this.InstanceReloadButton.Click += new System.EventHandler(this.ReloadControl_EventHandler);
@@ -1190,7 +1188,7 @@
             this.BackupRestoreAcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BackupRestoreAcumaticaLinkLabel.Name = "BackupRestoreAcumaticaLinkLabel";
             this.BackupRestoreAcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
-            this.BackupRestoreAcumaticaLinkLabel.TabIndex = 1001;
+            this.BackupRestoreAcumaticaLinkLabel.TabIndex = 9;
             this.BackupRestoreAcumaticaLinkLabel.TabStop = true;
             this.BackupRestoreAcumaticaLinkLabel.Text = "http://www.acumatica.com";
             // 
@@ -1206,7 +1204,7 @@
             this.InstanceBackupButton.Menu = this.InstanceBackupContextMenuStrip;
             this.InstanceBackupButton.Name = "InstanceBackupButton";
             this.InstanceBackupButton.Size = new System.Drawing.Size(148, 40);
-            this.InstanceBackupButton.TabIndex = 1005;
+            this.InstanceBackupButton.TabIndex = 5;
             this.InstanceBackupButton.Text = "&Backup";
             this.InstanceBackupButton.UseVisualStyleBackColor = true;
             // 
@@ -1298,7 +1296,7 @@
             this.InstanceDataGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InstanceDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.InstanceDataGridView.Size = new System.Drawing.Size(1050, 814);
-            this.InstanceDataGridView.TabIndex = 0;
+            this.InstanceDataGridView.TabIndex = 2;
             this.InstanceDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.InstanceDataGridView_CellFormatting);
             this.InstanceDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DataGridView_KeyPress);
             // 
@@ -1393,16 +1391,6 @@
             this.InstanceBindingSource.Filter = "";
             this.InstanceBindingSource.Sort = "InstanceName";
             this.InstanceBindingSource.CurrentChanged += new System.EventHandler(this.BindingSource_CurrentChanged);
-            // 
-            // StatusImageList
-            // 
-            this.StatusImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("StatusImageList.ImageStream")));
-            this.StatusImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.StatusImageList.Images.SetKeyName(0, "success");
-            this.StatusImageList.Images.SetKeyName(1, "warning");
-            this.StatusImageList.Images.SetKeyName(2, "error");
-            this.StatusImageList.Images.SetKeyName(3, "remote");
-            this.StatusImageList.Images.SetKeyName(4, "local");
             // 
             // RestorePanel
             // 
@@ -1616,6 +1604,7 @@
             this.InstanceNameTextBox.Name = "InstanceNameTextBox";
             this.InstanceNameTextBox.Size = new System.Drawing.Size(371, 26);
             this.InstanceNameTextBox.TabIndex = 4;
+            this.InstanceNameTextBox.TextChanged += new System.EventHandler(this.InstanceNameTextBox_TextChanged);
             // 
             // InstanceNameLabel
             // 
@@ -1638,9 +1627,9 @@
             this.label2.Location = new System.Drawing.Point(4, 46);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(171, 23);
+            this.label2.Size = new System.Drawing.Size(112, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Select backup file:";
+            this.label2.Text = "Backup file:";
             // 
             // BrowseBackupFileButton
             // 
@@ -1927,7 +1916,6 @@
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Acumatica ERP Workspace Manager";
-            this.Load += new System.EventHandler(this.Main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PackageDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PackageBindingSource)).EndInit();
             this.PackagePanel.ResumeLayout(false);
@@ -2086,7 +2074,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ServerNameComboBox;
         internal System.Windows.Forms.Button StartSQLBrowserButton;
-        private System.Windows.Forms.Label StartSQLBrowserLabel;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
     }

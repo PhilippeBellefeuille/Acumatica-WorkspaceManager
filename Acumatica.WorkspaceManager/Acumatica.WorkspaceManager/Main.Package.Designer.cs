@@ -26,19 +26,19 @@ namespace Acumatica.WorkspaceManager
 
                 if (buildPackage != null)
                 {
-                    if (e.ColumnIndex == PackageDataGridView.Columns["PackageStatus"].Index)
+                    if (e.ColumnIndex == PackageDataGridView.Columns[Constants.packageStatusColumn].Index)
                     {
                         if (buildPackage.IsInstalled)
                         {
-                            e.Value = StatusImageList.Images["success"];
+                            e.Value = StatusImageList.Images[Constants.successImage];
                         }
                         else if (buildPackage.IsLocal)
                         {
-                            e.Value = StatusImageList.Images["local"];
+                            e.Value = StatusImageList.Images[Constants.localImage];
                         }
                         else if (buildPackage.IsRemote)
                         {
-                            e.Value = StatusImageList.Images["remote"];
+                            e.Value = StatusImageList.Images[Constants.remoteImage];
                         }
                         else
                         {
@@ -106,8 +106,8 @@ namespace Acumatica.WorkspaceManager
                                            Convert.ToString(buildPackage.MinorVersion, CultureInfo.InvariantCulture).PadLeft(minorVersionLength, versionEmptyChar),
                                            versionSeparatorChar,
                                            Convert.ToString(buildPackage.BuildNumber, CultureInfo.InvariantCulture).PadLeft(buildNumberLength, versionEmptyChar));
-
-            for (int i = 0; i < version.Length; i++)
+            
+            for (int i = 0; i < filterVersion.Length && i < version.Length; i++)
             {
                 char charFilter = filterVersion[i];
                 char charVersion = version[i];
@@ -128,8 +128,8 @@ namespace Acumatica.WorkspaceManager
             bool isBuildPackage = (buildPackage != null);
             string filePath = (isBuildPackage ? BuildManager.GetPathFromKey(buildPackage.Key) : null);
             string directory = (filePath != null ? Path.GetDirectoryName(filePath) : null);
-            string installDirectory = (directory != null ? Path.Combine(directory, "Files") : null);
-            string wizardPath = (installDirectory != null ? Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe") : null);
+            string installDirectory = (directory != null ? Path.Combine(directory, Constants.filesDirectory) : null);
+            string wizardPath = (installDirectory != null ? Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename) : null);
 
             bool isDirectory = Directory.Exists(directory);
             bool isInstallDirectory = Directory.Exists(installDirectory);
@@ -148,9 +148,8 @@ namespace Acumatica.WorkspaceManager
         {
             try
             {
-                const string emptyVersionMask = "_.__.____";
                 packageVersionFilter = PackageVersionMaskedTextBox.Text;
-                PackageFilteredLabel.Visible = (packageVersionFilter != null && packageVersionFilter != emptyVersionMask);
+                PackageFilteredLabel.Visible = (packageVersionFilter != null && packageVersionFilter != Constants.emptyVersionMask);
 
                 // Save selection
                 BuildPackage selectedBuildPackage = GetSelectedPackage();
@@ -235,7 +234,8 @@ namespace Acumatica.WorkspaceManager
             }
             catch (Exception ex)
             {
-                SysData.ShowException(ex.Message, ErrorLevel.Error);
+                PXWait.StopWait();
+                SysData.ShowException(ex.ToString(), ErrorLevel.Error);
             }
         }
 
@@ -256,11 +256,11 @@ namespace Acumatica.WorkspaceManager
 
                     try
                     {
-                        PXWait.ShowProgress(-1, "Connecting to build server...");
+                        PXWait.ShowProgress(-1, Messages.connectingBuildServerProgress);
 
                         BuildManager.GetBuildPackages(delegate (int percentDone, long counter, long total)
                         {
-                            PXWait.ShowProgress(-1, string.Concat("Loading build package: ", Convert.ToString(counter, CultureInfo.InvariantCulture)));
+                            PXWait.ShowProgress(-1, string.Format(Messages.loadingBuildPackageProgress, Convert.ToString(counter, CultureInfo.InvariantCulture)));
                         }).ToList().ForEach(buildPackage => buildPackages.Add(buildPackage));
 
                         PackageBindingSource.CurrencyManager.SuspendBinding();
@@ -272,18 +272,13 @@ namespace Acumatica.WorkspaceManager
                         PackageBindingSource.CurrencyManager.ResumeBinding();
 
                         FilterPackage();
+                        PXWait.StopWait();
                     }
                     catch (Exception ex)
                     {
-                        if (PXWait.IsStarted || PXWait.IsShown)
-                        {
-                            PXWait.StopWait();
-                        }
-
-                        SysData.ShowException(ex.Message, ErrorLevel.Error);
+                        PXWait.StopWait();
+                        SysData.ShowException(ex.ToString(), ErrorLevel.Error);
                     }
-
-                    PXWait.StopWait();
                 });
             })).Start();
         }

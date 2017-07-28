@@ -1,10 +1,12 @@
 ﻿using Acumatica.WorkspaceManager.BackupRestore;
 using Acumatica.WorkspaceManager.Common;
 using ConfigCore;
+using Microsoft.Win32;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Windows.Forms;
 
 namespace Acumatica.WorkspaceManager
@@ -12,6 +14,13 @@ namespace Acumatica.WorkspaceManager
     public partial class Main
     {
         #region Events
+        private void DatabaseListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (OverwriteDatabaseRadioButton.Checked && DatabaseListBox.SelectedItem != null)
+            {
+                DatabaseNameTextBox.Text = DatabaseListBox.SelectedItem as string;
+            }
+        }
 
         private void DatabaseRadioButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -21,13 +30,25 @@ namespace Acumatica.WorkspaceManager
             DatabaseNameTextBox.Enabled = isCreateNewDatabase;
             DatabaseListBox.Enabled = !isCreateNewDatabase;
         }
+        
+        private void InstanceNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string instanceName = InstanceNameTextBox.Text.Trim();
+            DatabaseNameTextBox.Text = instanceName;
+            VirtualDirectoryNameTextBox.Text = instanceName;
+
+            if (!string.IsNullOrWhiteSpace(SitePathTextBox.Text) && !SitePathTextBox.Text.EndsWith(instanceName))
+            {
+                SitePathTextBox.Text = Path.Combine(Directory.GetParent(SitePathTextBox.Text).FullName, instanceName);
+            }
+        }
 
         private void PickBackupFileButton_Click(object sender, EventArgs e)
         {
             BackupFilePathTextBox.Text = PickBackupFile();
             string backupFile = BackupFilePathTextBox.Text;
 
-            if (File.Exists(backupFile) && Path.GetExtension(backupFile) == ".zip")
+            if (File.Exists(backupFile) && Path.GetExtension(backupFile) == Constants.zipFileExtension)
             {
                 string instanceName = Path.GetFileNameWithoutExtension(backupFile);
 
@@ -37,7 +58,7 @@ namespace Acumatica.WorkspaceManager
                     InstanceNameTextBox.Text = instanceName;
                     DatabaseNameTextBox.Text = instanceName;
                     VirtualDirectoryNameTextBox.Text = instanceName;
-                    SitePathTextBox.Text = Path.Combine(@"c:\AcumaticaSites\", instanceName);
+                    SitePathTextBox.Text = Path.Combine(Constants.defaultSitePath, instanceName);
                     InstanceNameLabel.Enabled = true;
                     SitePathLabel.Enabled = true;
                     PickSitePathButton.Enabled = true;
@@ -54,13 +75,21 @@ namespace Acumatica.WorkspaceManager
         {
             FolderSelectDialog folderSelectDialog = new FolderSelectDialog
             {
-                InitialDirectory = @"c:\AcumaticaSites",
-                Title = "Select Instance Path"
+                InitialDirectory = Constants.defaultSitePath,
+                Title = Messages.selectInstancePathTitle
             };
 
             if (folderSelectDialog.Show(Handle))
             {
-                SitePathTextBox.Text = folderSelectDialog.FileName;
+                string instanceName = InstanceNameTextBox.Text.Trim();
+                string path = folderSelectDialog.FileName;
+
+                if (!path.EndsWith(instanceName))
+                {
+                    path = Path.Combine(path, instanceName);
+                }
+
+                SitePathTextBox.Text = path;
             }
         }
         #endregion
@@ -68,17 +97,22 @@ namespace Acumatica.WorkspaceManager
         #region Methods
         private void ExecuteRestoreAction(object sender)
         {
-            string backupFile = BackupFilePathTextBox.Text;
-            string instanceName = InstanceNameTextBox.Text;
-            string virtualDirectory = VirtualDirectoryNameTextBox.Text;
-            string databaseName = DatabaseNameTextBox.Text;
+            bool isRestoreDatabase = DatabaseSettingsPanel.Visible;
+            bool isRestoreWebsite = WebsiteSettingsPanel.Visible;
+
+            string backupFile = BackupFilePathTextBox.Text.Trim();
+            string instanceName = InstanceNameTextBox.Text.Trim();
+            string virtualDirectory = VirtualDirectoryNameTextBox.Text.Trim();
+            string databaseName = DatabaseNameTextBox.Text.Trim();
             string websiteName = Convert.ToString(WebsitesListBox.SelectedItem, CultureInfo.InvariantCulture);
             string appPool = Convert.ToString(AppPoolListBox.SelectedItem, CultureInfo.InvariantCulture);
-            string sitePath = SitePathTextBox.Text;
+            string sitePath = SitePathTextBox.Text.Trim();
+
+            ValidateRestore(isRestoreDatabase, isRestoreWebsite, backupFile, instanceName, virtualDirectory, databaseName, websiteName, appPool, sitePath);
 
             Website website = new Website(instanceName,
                                           virtualDirectory,
-                                          "REM-LT-12/" + databaseName,
+                                          string.Concat(ServerNameComboBox.Text, Constants.slash, databaseName),
                                           null,
                                           null,
                                           sitePath,
@@ -87,17 +121,53 @@ namespace Acumatica.WorkspaceManager
                                           Enum.GetName(typeof(SiteTypes), SiteTypes.RegularSite),
                                           websiteName);
 
-            RestoreManager.RestoreInstance(BuildServerConnection(ServerNameComboBox.Text), 
-                                           website, 
-                                           backupFile, 
+            RestoreManager.RestoreInstance(BuildServerConnection(ServerNameComboBox.Text),
+                                           website,
+                                           backupFile,
                                            appPool,
-                                           DatabaseSettingsPanel.Visible,
-                                           WebsiteSettingsPanel.Visible);
+                                           isRestoreDatabase,
+                                           isRestoreWebsite);
 
             RestorePanel.Visible = false;
             InstancePanel.Visible = true;
             InstancePanel.Focus();
             ReloadInstance(website.InstanceName);
+        }
+
+        private bool IsInstance(string instanceName)
+        {
+            foreach (RegistryView registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
+            {
+                RegistryKey baseKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, registryView);
+
+                if (baseKey != null)
+                {
+                    RegistryKey key = baseKey.OpenSubKey(Constants.acumaticaRegistryKey, RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey);
+
+                    if (key != null)
+                    {
+                        string[] subKeys = key.GetSubKeyNames();
+
+                        foreach (string subKeyName in subKeys)
+                        {
+                            if (subKeyName.Trim() == instanceName.Trim())
+                            {
+                                return true;
+                            }
+
+                            RegistryKey subKey = key.OpenSubKey(subKeyName, RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey);
+                            string virtualDirectory = subKey.GetValue(Constants.virtualDirectoryRegistryValue) as string;
+
+                            if (virtualDirectory != null && virtualDirectory.Trim() == instanceName)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         private void LoadAppPoolsList()
@@ -160,9 +230,9 @@ namespace Acumatica.WorkspaceManager
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Filter = "Zip Archive|*.zip",
+                Filter = Constants.zipFileFilter,
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                Title = "Load Backup File"
+                Title = Messages.loadBackupFileTitle
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK &&
@@ -172,6 +242,49 @@ namespace Acumatica.WorkspaceManager
             }
 
             return null;
+        }
+
+        private void ValidateRestore(bool isRestoreDatabase, bool isRestoreWebsite, string backupFile, string instanceName, string virtualDirectory, string databaseName, string websiteName, string appPool, string sitePath)
+        {
+            if (isRestoreWebsite && !string.IsNullOrWhiteSpace(instanceName) && IsInstance(instanceName.Trim()))
+            {
+                throw new Exception(string.Format(Messages.instanceAlreadyExistsError, instanceName.Trim()));
+            }
+
+            if (string.IsNullOrWhiteSpace(backupFile))
+            {
+                throw new Exception(Messages.missingBackupFileError);
+            }
+
+            if (isRestoreWebsite && string.IsNullOrWhiteSpace(instanceName))
+            {
+                throw new Exception(Messages.missingInstanceNameError);
+            }
+
+            if (isRestoreWebsite && string.IsNullOrWhiteSpace(virtualDirectory))
+            {
+                throw new Exception(Messages.missingVirtualDirectoryError);
+            }
+
+            if (isRestoreDatabase && string.IsNullOrWhiteSpace(databaseName))
+            {
+                throw new Exception(Messages.missingDatabaseNameError);
+            }
+
+            if (isRestoreWebsite && string.IsNullOrWhiteSpace(websiteName))
+            {
+                throw new Exception(Messages.missingWebsiteNameError);
+            }
+
+            if (string.IsNullOrWhiteSpace(appPool))
+            {
+                throw new Exception(Messages.missingApplicationPoolError);
+            }
+
+            if (isRestoreWebsite && string.IsNullOrWhiteSpace(sitePath))
+            {
+                throw new Exception(Messages.missingInstancePathError);
+            }
         }
         #endregion
     }

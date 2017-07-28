@@ -29,8 +29,8 @@ namespace Acumatica.WorkspaceManager.Builds
 
                     string filePath = GetPathFromKey(remoteBuildPackage.Key);
                     string directory = Path.GetDirectoryName(filePath);
-                    string installDirectory = Path.Combine(directory, "Files");
-                    string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
+                    string installDirectory = Path.Combine(directory, Constants.filesDirectory);
+                    string wizardPath = Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename);
                     remoteBuildPackage.SetIsLocal(File.Exists(filePath));
                     remoteBuildPackage.SetIsInstalled(File.Exists(wizardPath));
                 }
@@ -58,7 +58,7 @@ namespace Acumatica.WorkspaceManager.Builds
 
                 BuildPackage buildPackage;
 
-                if (key.EndsWith(string.Concat("AcumaticaERP/", Resources.PackageName), StringComparison.InvariantCultureIgnoreCase) &&
+                if (key.EndsWith(string.Concat(Constants.acumaticaDirectory, Constants.slash, Resources.PackageName), StringComparison.InvariantCultureIgnoreCase) &&
                     BuildPackage.TryCreate(key, out buildPackage))
                 {
                     yield return buildPackage;
@@ -110,7 +110,7 @@ namespace Acumatica.WorkspaceManager.Builds
         public static void DownloadPackage(BuildPackage buildPackage, ProgressCallbackDelegate progressCallback)
         {
             if (!buildPackage.IsRemote)
-                throw new Exception("Cannot download package that is not available online");
+                throw new Exception(Messages.downloadError);
             
             var s3Uri = GetS3Uri();
             using (var client = CreateAnonymousS3Client(s3Uri))
@@ -144,7 +144,7 @@ namespace Acumatica.WorkspaceManager.Builds
         public static void DeletePackage(BuildPackage buildPackage)
         {
             if (!buildPackage.IsLocal)
-                throw new Exception("Only local packages can be deleted");
+                throw new Exception(Messages.deletePackageError);
         }
 
         public static string GetKeyFromPath(string filePath)

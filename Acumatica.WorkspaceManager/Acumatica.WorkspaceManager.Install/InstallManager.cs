@@ -18,7 +18,7 @@ namespace Acumatica.WorkspaceManager.Install
             if (acumaticaRegistryKey == null)
                 return null;
 
-            return (string)acumaticaRegistryKey["DisplayVersion"];
+            return (string)acumaticaRegistryKey[Constants.displayVersionRegistryValue];
         }
 
         public delegate void ProcessExitedDelegate();
@@ -26,14 +26,14 @@ namespace Acumatica.WorkspaceManager.Install
         public static void InstallAcumatica(BuildPackage buildPackage, EventHandler callback)
         {
             string installerPath = BuildManager.GetPathFromKey(buildPackage.Key);          
-            string installerDirectory = Path.Combine(Path.GetDirectoryName(installerPath), "Files");
+            string installerDirectory = Path.Combine(Path.GetDirectoryName(installerPath), Constants.filesDirectory);
             string installerTempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(installerPath));
             File.Copy(installerPath, installerTempPath, true);
 
             Process process = new Process()
             {
                 EnableRaisingEvents = true,
-                StartInfo = new ProcessStartInfo("msiexec.exe", string.Format("/a \"{0}\" /qb targetdir=\"{1}\"", installerTempPath, installerDirectory))
+                StartInfo = new ProcessStartInfo(Constants.msiFilename, string.Format("/a \"{0}\" /qb targetdir=\"{1}\"", installerTempPath, installerDirectory))
             };
             
             process.Exited += delegate
@@ -50,8 +50,7 @@ namespace Acumatica.WorkspaceManager.Install
         {
             string path = BuildManager.GetPathFromKey(buildPackage.Key);
             string directory = Path.GetDirectoryName(path);
-            string wizardPath = Path.Combine(directory, "Files", "Data", "AcumaticaConfig.exe");
-
+            string wizardPath = Path.Combine(directory, Constants.filesDirectory, Constants.dataDirectory, Constants.wizardFilename);
             Process.Start(new ProcessStartInfo(wizardPath));
         }
 
@@ -65,7 +64,7 @@ namespace Acumatica.WorkspaceManager.Install
                 return;
             }
 
-            throw new Exception(string.Concat("Install directory not found: ", Environment.NewLine, directory));
+            throw new Exception(string.Format(Messages.missingInstallDirectoryError, Environment.NewLine, directory));
         }
 
         public static void UninstallPackage(BuildPackage buildPackage)
@@ -80,7 +79,7 @@ namespace Acumatica.WorkspaceManager.Install
                 return;
             }
 
-            throw new Exception(string.Concat("Install directory not found: ", Environment.NewLine, directory));
+            throw new Exception(string.Format(Messages.missingInstallDirectoryError, Environment.NewLine, directory));
         }
 
         public static void DownloadPackage(BuildPackage buildPackage)
@@ -105,7 +104,7 @@ namespace Acumatica.WorkspaceManager.Install
             }
             else
             {
-                throw new Exception("Failed to download remote file to local directory.");
+                throw new Exception(Messages.fileTransferError);
             }
         }
 
@@ -115,8 +114,8 @@ namespace Acumatica.WorkspaceManager.Install
             {
                 string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
                 string directory = Path.GetDirectoryName(filePath);
-                string installDirectory = Path.Combine(directory, "Files");
-                string wizardPath = Path.Combine(installDirectory, "Data", "AcumaticaConfig.exe");
+                string installDirectory = Path.Combine(directory, Constants.filesDirectory);
+                string wizardPath = Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename);
 
                 if (File.Exists(wizardPath))
                 {
@@ -125,7 +124,7 @@ namespace Acumatica.WorkspaceManager.Install
                 }
                 else
                 {
-                    throw new Exception("Failed to install Acumatica ERP.");
+                    throw new Exception(Messages.installError);
                 }
             });
         }
@@ -150,14 +149,14 @@ namespace Acumatica.WorkspaceManager.Install
             }
             else
             {
-                throw new Exception("Failed to remove local file.");
+                throw new Exception(Messages.removeFileError);
             }
         }
 
         private static Process GetInstallAcumaticaProcess(string path, ProcessExitedDelegate del)
         {
             Process p = new Process();
-            p.StartInfo.FileName = "msiexec.exe";
+            p.StartInfo.FileName = Constants.msiFilename;
             p.StartInfo.Arguments = string.Format("/i {0} /qn", path);
 
             p.Exited += (object sender, EventArgs e) =>
@@ -176,10 +175,10 @@ namespace Acumatica.WorkspaceManager.Install
             if (acumaticaRegistryKey == null)
                 return null;
 
-            var uninstalledCommand = (string)acumaticaRegistryKey["UninstallString"];
+            var uninstalledCommand = (string)acumaticaRegistryKey[Constants.uninstallRegistryValue];
             var acumaticaPackageGuid = uninstalledCommand.Replace("MsiExec.exe /I", string.Empty);
             Process p = new Process();
-            p.StartInfo.FileName = "msiexec.exe";
+            p.StartInfo.FileName = Constants.msiFilename;
             p.StartInfo.Arguments = string.Format("/x {0} /qn", acumaticaPackageGuid);
             //p.StartInfo.Arguments = "/x \"C:\\MyApplication.msi\"/qn";
             p.Exited += (object sender, EventArgs e) =>
@@ -193,15 +192,14 @@ namespace Acumatica.WorkspaceManager.Install
         
         private static Dictionary<string, object> GetAcumaticaRegistryKeyValues()
         {
-            string registry_key = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-            using (Microsoft.Win32.RegistryKey key = Registry.LocalMachine.OpenSubKey(registry_key))
+            using (Microsoft.Win32.RegistryKey key = Registry.LocalMachine.OpenSubKey(Constants.uninstallRegistryKey))
             {
                 foreach (string subkey_name in key.GetSubKeyNames())
                 {
                     using (RegistryKey subkey = key.OpenSubKey(subkey_name))
                     {
-                        var displayName = subkey.GetValue("DisplayName");
-                        if (displayName != null && (string)displayName == "Acumatica ERP")
+                        var displayName = subkey.GetValue(Constants.displayNameRegistryValue);
+                        if (displayName != null && (string)displayName == Constants.productNameRegistryValue)
                         {
                             var registryKeyValues = new Dictionary<string, object>();
 
