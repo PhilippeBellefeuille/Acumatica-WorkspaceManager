@@ -22,6 +22,7 @@ namespace Acumatica.WorkspaceManager.Builds
             foreach (var remoteBuildPackage in GetRemoteBuildPackages())
             {
                 remoteBuildPackage.SetIsRemote();
+                remoteBuildPackage.SetIsPreview(remoteBuildPackage.Key.ToUpperInvariant().Contains(Constants.previewVersion));
 
                 if (localBuildPackages.ContainsKey(remoteBuildPackage.Key))
                 {

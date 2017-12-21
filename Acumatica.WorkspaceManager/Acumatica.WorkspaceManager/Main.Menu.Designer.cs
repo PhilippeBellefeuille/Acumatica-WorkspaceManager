@@ -12,7 +12,7 @@ namespace Acumatica.WorkspaceManager
     public partial class Main
     {
         #region Events
-        private void BackButton_Click(object sender, EventArgs e)
+        private void Button_Click(object sender, EventArgs e)
         {
             if (sender == RestoreBackButton)
             {
@@ -28,6 +28,16 @@ namespace Acumatica.WorkspaceManager
             {
                 InstancePanel.Visible = false;
                 MenuPanel.Visible = true;
+            }
+            else if (sender == ServerSettingsButton)
+            {
+                InstancePanel.Visible = false;
+                DatabasePanel.Visible = true;
+            }
+            else if (sender == DatabaseBackButton)
+            {
+                DatabasePanel.Visible = false;
+                InstancePanel.Visible = true;
             }
         }
 
@@ -76,7 +86,7 @@ namespace Acumatica.WorkspaceManager
                 InstanceDataGridView.Focus();
             }
         }
-
+        
         private void StartSQLBrowserButton_Click(object sender, EventArgs e)
         {
                 new Thread(new ThreadStart(delegate

@@ -102,7 +102,8 @@ namespace Acumatica.WorkspaceManager
             else if ((sender == PackageVersionMaskedTextBox && packageVersionFilter != PackageVersionMaskedTextBox.Text) ||
                      sender == ShowRemoteCheckBox ||
                      sender == ShowLocalCheckBox ||
-                     sender == ShowInstalledCheckBox)
+                     sender == ShowInstalledCheckBox ||
+                     sender == ShowPreviewCheckBox)
             {
                 FilterPackage();
             }

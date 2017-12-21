@@ -51,6 +51,7 @@
             this.IsInstalled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.IsLocal = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.PackageKey = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VersionString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PackageBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.PackageTitleLabel = new System.Windows.Forms.Label();
             this.PackageSubTitleLabel = new System.Windows.Forms.Label();
@@ -67,33 +68,34 @@
             this.RemoveButton = new System.Windows.Forms.Button();
             this.ShowInstalledCheckBox = new System.Windows.Forms.CheckBox();
             this.PackagePanel = new System.Windows.Forms.Panel();
+            this.ShowPreviewCheckBox = new System.Windows.Forms.CheckBox();
             this.PackageFilteredLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.PackageBackButton = new System.Windows.Forms.Button();
             this.PackageReloadButton = new System.Windows.Forms.Button();
             this.MenuPanel = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.MenuAcumaticaPictureBox = new System.Windows.Forms.PictureBox();
+            this.MenuAcumaticaLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.MenuTitleLabel = new System.Windows.Forms.Label();
+            this.MenuOptionsPanel = new System.Windows.Forms.Panel();
             this.MenuSubTitleLabel = new System.Windows.Forms.Label();
             this.PackageMenuLinkLabel = new System.Windows.Forms.LinkLabel();
             this.BackupRestoreMenuLinkLabel = new System.Windows.Forms.LinkLabel();
             this.Menu1DescriptionLabel = new System.Windows.Forms.Label();
             this.Menu2DescriptionLabel = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.DatabaseServerSettingsPanel = new System.Windows.Forms.Panel();
             this.DatabasePasswordTextBox = new System.Windows.Forms.TextBox();
             this.StartSQLBrowserButton = new System.Windows.Forms.Button();
             this.StatusImageList = new System.Windows.Forms.ImageList(this.components);
             this.WindowsAuthRadioButton = new System.Windows.Forms.RadioButton();
-            this.label5 = new System.Windows.Forms.Label();
             this.ServerNameComboBox = new System.Windows.Forms.ComboBox();
             this.SQLServerAuthRadioButton = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.LoginLabel = new System.Windows.Forms.Label();
             this.PasswordLabel = new System.Windows.Forms.Label();
             this.DatabaseLoginTextBox = new System.Windows.Forms.TextBox();
-            this.MenuAcumaticaPictureBox = new System.Windows.Forms.PictureBox();
-            this.MenuAcumaticaLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.MenuTitleLabel = new System.Windows.Forms.Label();
             this.InstancePanel = new System.Windows.Forms.Panel();
+            this.ServerSettingsButton = new System.Windows.Forms.Button();
             this.OpenWebsiteButton = new System.Windows.Forms.Button();
             this.InstanceNameFilterTextBox = new System.Windows.Forms.TextBox();
             this.BackupRestoreAcumaticaPictureBox = new System.Windows.Forms.PictureBox();
@@ -166,14 +168,19 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.RestoreTitleLabel = new System.Windows.Forms.Label();
             this.RestoreSubTitleLabel = new System.Windows.Forms.Label();
+            this.DatabasePanel = new System.Windows.Forms.Panel();
+            this.DatabaseBackButton = new System.Windows.Forms.Button();
+            this.DatabaseAcumaticaPictureBox = new System.Windows.Forms.PictureBox();
+            this.DatabaseAcumaticaLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.DatabaseTitleLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PackageDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PackageBindingSource)).BeginInit();
             this.PackagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.MenuPanel.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MenuAcumaticaPictureBox)).BeginInit();
+            this.MenuOptionsPanel.SuspendLayout();
+            this.DatabaseServerSettingsPanel.SuspendLayout();
             this.InstancePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackupRestoreAcumaticaPictureBox)).BeginInit();
             this.InstanceRestoreContextMenuStrip.SuspendLayout();
@@ -188,6 +195,8 @@
             this.WebsiteSettingsPanel.SuspendLayout();
             this.AppPoolSettingsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.DatabasePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DatabaseAcumaticaPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // PackageDataGridView
@@ -218,7 +227,8 @@
             this.IsRemote,
             this.IsInstalled,
             this.IsLocal,
-            this.PackageKey});
+            this.PackageKey,
+            this.VersionString});
             this.PackageDataGridView.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.PackageBindingSource, "Key", true));
             this.PackageDataGridView.DataSource = this.PackageBindingSource;
             this.PackageDataGridView.Location = new System.Drawing.Point(13, 98);
@@ -231,6 +241,7 @@
             this.PackageDataGridView.Size = new System.Drawing.Size(1050, 814);
             this.PackageDataGridView.TabIndex = 2;
             this.PackageDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.PackageDataGridView_CellFormatting);
+            this.PackageDataGridView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.PackageDataGridView_ColumnHeaderMouseClick);
             this.PackageDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DataGridView_KeyPress);
             // 
             // PackageStatus
@@ -294,7 +305,7 @@
             this.IsInstalled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.IsInstalled.DataPropertyName = "IsInstalled";
             this.IsInstalled.FillWeight = 1F;
-            this.IsInstalled.HeaderText = "IsInstalled";
+            this.IsInstalled.HeaderText = "Installed";
             this.IsInstalled.Name = "IsInstalled";
             this.IsInstalled.ReadOnly = true;
             this.IsInstalled.Width = 70;
@@ -320,11 +331,19 @@
             this.PackageKey.ReadOnly = true;
             this.PackageKey.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // VersionString
+            // 
+            this.VersionString.DataPropertyName = "VersionString";
+            this.VersionString.HeaderText = "VersionString";
+            this.VersionString.Name = "VersionString";
+            this.VersionString.ReadOnly = true;
+            this.VersionString.Visible = false;
+            // 
             // PackageBindingSource
             // 
             this.PackageBindingSource.DataSource = typeof(Acumatica.WorkspaceManager.Common.BuildPackage);
             this.PackageBindingSource.Filter = "MajorVersion, MinorVersion";
-            this.PackageBindingSource.Sort = "MajorVersion, MinorVersion, BuildNumber";
+            this.PackageBindingSource.Sort = "VersionString";
             this.PackageBindingSource.CurrentChanged += new System.EventHandler(this.BindingSource_CurrentChanged);
             // 
             // PackageTitleLabel
@@ -373,7 +392,7 @@
             // 
             this.PackageVersionMaskedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.PackageVersionMaskedTextBox.Location = new System.Drawing.Point(334, 924);
-            this.PackageVersionMaskedTextBox.Mask = "9.99.9999";
+            this.PackageVersionMaskedTextBox.Mask = "99.999.9999";
             this.PackageVersionMaskedTextBox.Name = "PackageVersionMaskedTextBox";
             this.PackageVersionMaskedTextBox.Size = new System.Drawing.Size(112, 26);
             this.PackageVersionMaskedTextBox.TabIndex = 4;
@@ -449,7 +468,7 @@
             this.ShowLocalCheckBox.AutoSize = true;
             this.ShowLocalCheckBox.Checked = true;
             this.ShowLocalCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowLocalCheckBox.Location = new System.Drawing.Point(472, 959);
+            this.ShowLocalCheckBox.Location = new System.Drawing.Point(472, 948);
             this.ShowLocalCheckBox.Name = "ShowLocalCheckBox";
             this.ShowLocalCheckBox.Size = new System.Drawing.Size(117, 24);
             this.ShowLocalCheckBox.TabIndex = 6;
@@ -529,7 +548,7 @@
             this.ShowInstalledCheckBox.AutoSize = true;
             this.ShowInstalledCheckBox.Checked = true;
             this.ShowInstalledCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowInstalledCheckBox.Location = new System.Drawing.Point(472, 991);
+            this.ShowInstalledCheckBox.Location = new System.Drawing.Point(472, 972);
             this.ShowInstalledCheckBox.Name = "ShowInstalledCheckBox";
             this.ShowInstalledCheckBox.Size = new System.Drawing.Size(139, 24);
             this.ShowInstalledCheckBox.TabIndex = 7;
@@ -539,6 +558,7 @@
             // 
             // PackagePanel
             // 
+            this.PackagePanel.Controls.Add(this.ShowPreviewCheckBox);
             this.PackagePanel.Controls.Add(this.PackageFilteredLabel);
             this.PackagePanel.Controls.Add(this.pictureBox1);
             this.PackagePanel.Controls.Add(this.PackageBackButton);
@@ -564,6 +584,18 @@
             this.PackagePanel.Size = new System.Drawing.Size(1076, 1038);
             this.PackagePanel.TabIndex = 1014;
             this.PackagePanel.Visible = false;
+            // 
+            // ShowPreviewCheckBox
+            // 
+            this.ShowPreviewCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowPreviewCheckBox.AutoSize = true;
+            this.ShowPreviewCheckBox.Location = new System.Drawing.Point(472, 997);
+            this.ShowPreviewCheckBox.Name = "ShowPreviewCheckBox";
+            this.ShowPreviewCheckBox.Size = new System.Drawing.Size(133, 24);
+            this.ShowPreviewCheckBox.TabIndex = 1016;
+            this.ShowPreviewCheckBox.Text = "Show Preview";
+            this.ShowPreviewCheckBox.UseVisualStyleBackColor = true;
+            this.ShowPreviewCheckBox.CheckedChanged += new System.EventHandler(this.ReloadControl_EventHandler);
             // 
             // PackageFilteredLabel
             // 
@@ -607,7 +639,7 @@
             this.PackageBackButton.TabIndex = 3;
             this.PackageBackButton.Text = "◀  &Back";
             this.PackageBackButton.UseVisualStyleBackColor = true;
-            this.PackageBackButton.Click += new System.EventHandler(this.BackButton_Click);
+            this.PackageBackButton.Click += new System.EventHandler(this.Button_Click);
             // 
             // PackageReloadButton
             // 
@@ -627,11 +659,10 @@
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.White;
-            this.MenuPanel.Controls.Add(this.panel2);
-            this.MenuPanel.Controls.Add(this.panel1);
             this.MenuPanel.Controls.Add(this.MenuAcumaticaPictureBox);
             this.MenuPanel.Controls.Add(this.MenuAcumaticaLinkLabel);
             this.MenuPanel.Controls.Add(this.MenuTitleLabel);
+            this.MenuPanel.Controls.Add(this.MenuOptionsPanel);
             this.MenuPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MenuPanel.Location = new System.Drawing.Point(0, 0);
             this.MenuPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -639,17 +670,64 @@
             this.MenuPanel.Size = new System.Drawing.Size(1076, 1038);
             this.MenuPanel.TabIndex = 1014;
             // 
-            // panel2
+            // MenuAcumaticaPictureBox
             // 
-            this.panel2.Controls.Add(this.MenuSubTitleLabel);
-            this.panel2.Controls.Add(this.PackageMenuLinkLabel);
-            this.panel2.Controls.Add(this.BackupRestoreMenuLinkLabel);
-            this.panel2.Controls.Add(this.Menu1DescriptionLabel);
-            this.panel2.Controls.Add(this.Menu2DescriptionLabel);
-            this.panel2.Location = new System.Drawing.Point(0, 331);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1076, 235);
-            this.panel2.TabIndex = 1043;
+            this.MenuAcumaticaPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MenuAcumaticaPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.MenuAcumaticaPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.MenuAcumaticaPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("MenuAcumaticaPictureBox.Image")));
+            this.MenuAcumaticaPictureBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.MenuAcumaticaPictureBox.InitialImage = null;
+            this.MenuAcumaticaPictureBox.Location = new System.Drawing.Point(13, 966);
+            this.MenuAcumaticaPictureBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MenuAcumaticaPictureBox.Name = "MenuAcumaticaPictureBox";
+            this.MenuAcumaticaPictureBox.Size = new System.Drawing.Size(195, 43);
+            this.MenuAcumaticaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.MenuAcumaticaPictureBox.TabIndex = 1003;
+            this.MenuAcumaticaPictureBox.TabStop = false;
+            // 
+            // MenuAcumaticaLinkLabel
+            // 
+            this.MenuAcumaticaLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MenuAcumaticaLinkLabel.AutoSize = true;
+            this.MenuAcumaticaLinkLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MenuAcumaticaLinkLabel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.MenuAcumaticaLinkLabel.Font = new System.Drawing.Font("Arial", 8.25F);
+            this.MenuAcumaticaLinkLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.MenuAcumaticaLinkLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.MenuAcumaticaLinkLabel.Location = new System.Drawing.Point(9, 1010);
+            this.MenuAcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MenuAcumaticaLinkLabel.Name = "MenuAcumaticaLinkLabel";
+            this.MenuAcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
+            this.MenuAcumaticaLinkLabel.TabIndex = 8;
+            this.MenuAcumaticaLinkLabel.TabStop = true;
+            this.MenuAcumaticaLinkLabel.Text = "http://www.acumatica.com";
+            this.MenuAcumaticaLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+            // 
+            // MenuTitleLabel
+            // 
+            this.MenuTitleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MenuTitleLabel.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
+            this.MenuTitleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.MenuTitleLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.MenuTitleLabel.Location = new System.Drawing.Point(13, 9);
+            this.MenuTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MenuTitleLabel.Name = "MenuTitleLabel";
+            this.MenuTitleLabel.Size = new System.Drawing.Size(958, 48);
+            this.MenuTitleLabel.TabIndex = 1;
+            this.MenuTitleLabel.Text = "Welcome to the Acumatica ERP Workspace Manager";
+            // 
+            // MenuOptionsPanel
+            // 
+            this.MenuOptionsPanel.Controls.Add(this.MenuSubTitleLabel);
+            this.MenuOptionsPanel.Controls.Add(this.PackageMenuLinkLabel);
+            this.MenuOptionsPanel.Controls.Add(this.BackupRestoreMenuLinkLabel);
+            this.MenuOptionsPanel.Controls.Add(this.Menu1DescriptionLabel);
+            this.MenuOptionsPanel.Controls.Add(this.Menu2DescriptionLabel);
+            this.MenuOptionsPanel.Location = new System.Drawing.Point(0, 64);
+            this.MenuOptionsPanel.Name = "MenuOptionsPanel";
+            this.MenuOptionsPanel.Size = new System.Drawing.Size(1076, 235);
+            this.MenuOptionsPanel.TabIndex = 1043;
             // 
             // MenuSubTitleLabel
             // 
@@ -726,22 +804,21 @@
             this.Menu2DescriptionLabel.Text = "Select this option if you need to backup, restore and delete Acumatica ERP instan" +
     "ce.";
             // 
-            // panel1
+            // DatabaseServerSettingsPanel
             // 
-            this.panel1.Controls.Add(this.DatabasePasswordTextBox);
-            this.panel1.Controls.Add(this.StartSQLBrowserButton);
-            this.panel1.Controls.Add(this.WindowsAuthRadioButton);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.ServerNameComboBox);
-            this.panel1.Controls.Add(this.SQLServerAuthRadioButton);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.LoginLabel);
-            this.panel1.Controls.Add(this.PasswordLabel);
-            this.panel1.Controls.Add(this.DatabaseLoginTextBox);
-            this.panel1.Location = new System.Drawing.Point(0, 64);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1076, 245);
-            this.panel1.TabIndex = 1042;
+            this.DatabaseServerSettingsPanel.Controls.Add(this.DatabasePasswordTextBox);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.StartSQLBrowserButton);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.WindowsAuthRadioButton);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.ServerNameComboBox);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.SQLServerAuthRadioButton);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.label4);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.LoginLabel);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.PasswordLabel);
+            this.DatabaseServerSettingsPanel.Controls.Add(this.DatabaseLoginTextBox);
+            this.DatabaseServerSettingsPanel.Location = new System.Drawing.Point(0, 64);
+            this.DatabaseServerSettingsPanel.Name = "DatabaseServerSettingsPanel";
+            this.DatabaseServerSettingsPanel.Size = new System.Drawing.Size(1076, 245);
+            this.DatabaseServerSettingsPanel.TabIndex = 1042;
             // 
             // DatabasePasswordTextBox
             // 
@@ -796,20 +873,6 @@
             this.WindowsAuthRadioButton.TabStop = true;
             this.WindowsAuthRadioButton.Text = "Windows Authentication";
             this.WindowsAuthRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
-            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label5.Location = new System.Drawing.Point(39, 10);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(220, 29);
-            this.label5.TabIndex = 1022;
-            this.label5.Text = "Database Settings";
             // 
             // ServerNameComboBox
             // 
@@ -886,55 +949,9 @@
             this.DatabaseLoginTextBox.Size = new System.Drawing.Size(194, 26);
             this.DatabaseLoginTextBox.TabIndex = 4;
             // 
-            // MenuAcumaticaPictureBox
-            // 
-            this.MenuAcumaticaPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.MenuAcumaticaPictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.MenuAcumaticaPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.MenuAcumaticaPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("MenuAcumaticaPictureBox.Image")));
-            this.MenuAcumaticaPictureBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.MenuAcumaticaPictureBox.InitialImage = null;
-            this.MenuAcumaticaPictureBox.Location = new System.Drawing.Point(13, 966);
-            this.MenuAcumaticaPictureBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MenuAcumaticaPictureBox.Name = "MenuAcumaticaPictureBox";
-            this.MenuAcumaticaPictureBox.Size = new System.Drawing.Size(195, 43);
-            this.MenuAcumaticaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.MenuAcumaticaPictureBox.TabIndex = 1003;
-            this.MenuAcumaticaPictureBox.TabStop = false;
-            // 
-            // MenuAcumaticaLinkLabel
-            // 
-            this.MenuAcumaticaLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.MenuAcumaticaLinkLabel.AutoSize = true;
-            this.MenuAcumaticaLinkLabel.BackColor = System.Drawing.Color.Transparent;
-            this.MenuAcumaticaLinkLabel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.MenuAcumaticaLinkLabel.Font = new System.Drawing.Font("Arial", 8.25F);
-            this.MenuAcumaticaLinkLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.MenuAcumaticaLinkLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-            this.MenuAcumaticaLinkLabel.Location = new System.Drawing.Point(9, 1010);
-            this.MenuAcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MenuAcumaticaLinkLabel.Name = "MenuAcumaticaLinkLabel";
-            this.MenuAcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
-            this.MenuAcumaticaLinkLabel.TabIndex = 8;
-            this.MenuAcumaticaLinkLabel.TabStop = true;
-            this.MenuAcumaticaLinkLabel.Text = "http://www.acumatica.com";
-            this.MenuAcumaticaLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-            // 
-            // MenuTitleLabel
-            // 
-            this.MenuTitleLabel.BackColor = System.Drawing.Color.Transparent;
-            this.MenuTitleLabel.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
-            this.MenuTitleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
-            this.MenuTitleLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.MenuTitleLabel.Location = new System.Drawing.Point(13, 9);
-            this.MenuTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MenuTitleLabel.Name = "MenuTitleLabel";
-            this.MenuTitleLabel.Size = new System.Drawing.Size(958, 48);
-            this.MenuTitleLabel.TabIndex = 1;
-            this.MenuTitleLabel.Text = "Welcome to the Acumatica ERP Workspace Manager";
-            // 
             // InstancePanel
             // 
+            this.InstancePanel.Controls.Add(this.ServerSettingsButton);
             this.InstancePanel.Controls.Add(this.OpenWebsiteButton);
             this.InstancePanel.Controls.Add(this.InstanceNameFilterTextBox);
             this.InstancePanel.Controls.Add(this.BackupRestoreAcumaticaPictureBox);
@@ -955,6 +972,22 @@
             this.InstancePanel.Size = new System.Drawing.Size(1076, 1038);
             this.InstancePanel.TabIndex = 1015;
             this.InstancePanel.Visible = false;
+            // 
+            // ServerSettingsButton
+            // 
+            this.ServerSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ServerSettingsButton.BackColor = System.Drawing.SystemColors.Control;
+            this.ServerSettingsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.ServerSettingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.ServerSettingsButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ServerSettingsButton.Location = new System.Drawing.Point(759, 47);
+            this.ServerSettingsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ServerSettingsButton.Name = "ServerSettingsButton";
+            this.ServerSettingsButton.Size = new System.Drawing.Size(148, 40);
+            this.ServerSettingsButton.TabIndex = 1016;
+            this.ServerSettingsButton.Text = "&Server Settings";
+            this.ServerSettingsButton.UseVisualStyleBackColor = true;
+            this.ServerSettingsButton.Click += new System.EventHandler(this.Button_Click);
             // 
             // OpenWebsiteButton
             // 
@@ -1009,7 +1042,7 @@
             this.InstanceBackButton.TabIndex = 3;
             this.InstanceBackButton.Text = "◀  &Back";
             this.InstanceBackButton.UseVisualStyleBackColor = true;
-            this.InstanceBackButton.Click += new System.EventHandler(this.BackButton_Click);
+            this.InstanceBackButton.Click += new System.EventHandler(this.Button_Click);
             // 
             // InstanceNameFilteredLabel
             // 
@@ -1298,6 +1331,7 @@
             this.InstanceDataGridView.Size = new System.Drawing.Size(1050, 814);
             this.InstanceDataGridView.TabIndex = 2;
             this.InstanceDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.InstanceDataGridView_CellFormatting);
+            this.InstanceDataGridView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.InstanceDataGridView_ColumnHeaderMouseClick);
             this.InstanceDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DataGridView_KeyPress);
             // 
             // InstanceStatus
@@ -1447,6 +1481,7 @@
             this.DatabaseSettingsPanel.Name = "DatabaseSettingsPanel";
             this.DatabaseSettingsPanel.Size = new System.Drawing.Size(532, 408);
             this.DatabaseSettingsPanel.TabIndex = 1023;
+            this.DatabaseSettingsPanel.Visible = false;
             // 
             // DatabaseNameLabel
             // 
@@ -1852,7 +1887,7 @@
             this.RestoreBackButton.TabIndex = 14;
             this.RestoreBackButton.Text = "◀  &Back";
             this.RestoreBackButton.UseVisualStyleBackColor = true;
-            this.RestoreBackButton.Click += new System.EventHandler(this.BackButton_Click);
+            this.RestoreBackButton.Click += new System.EventHandler(this.Button_Click);
             // 
             // linkLabel1
             // 
@@ -1899,16 +1934,94 @@
             this.RestoreSubTitleLabel.TabIndex = 1;
             this.RestoreSubTitleLabel.Text = "Enter configuration details required for the restore operation.";
             // 
+            // DatabasePanel
+            // 
+            this.DatabasePanel.BackColor = System.Drawing.Color.White;
+            this.DatabasePanel.Controls.Add(this.DatabaseBackButton);
+            this.DatabasePanel.Controls.Add(this.DatabaseAcumaticaPictureBox);
+            this.DatabasePanel.Controls.Add(this.DatabaseAcumaticaLinkLabel);
+            this.DatabasePanel.Controls.Add(this.DatabaseTitleLabel);
+            this.DatabasePanel.Controls.Add(this.DatabaseServerSettingsPanel);
+            this.DatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DatabasePanel.Location = new System.Drawing.Point(0, 0);
+            this.DatabasePanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.DatabasePanel.Name = "DatabasePanel";
+            this.DatabasePanel.Size = new System.Drawing.Size(1076, 1038);
+            this.DatabasePanel.TabIndex = 1044;
+            this.DatabasePanel.Visible = false;
+            // 
+            // DatabaseBackButton
+            // 
+            this.DatabaseBackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.DatabaseBackButton.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DatabaseBackButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.DatabaseBackButton.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DatabaseBackButton.Location = new System.Drawing.Point(13, 923);
+            this.DatabaseBackButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.DatabaseBackButton.Name = "DatabaseBackButton";
+            this.DatabaseBackButton.Size = new System.Drawing.Size(148, 40);
+            this.DatabaseBackButton.TabIndex = 1043;
+            this.DatabaseBackButton.Text = "◀  &Back";
+            this.DatabaseBackButton.UseVisualStyleBackColor = true;
+            this.DatabaseBackButton.Click += new System.EventHandler(this.Button_Click);
+            // 
+            // DatabaseAcumaticaPictureBox
+            // 
+            this.DatabaseAcumaticaPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.DatabaseAcumaticaPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.DatabaseAcumaticaPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.DatabaseAcumaticaPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("DatabaseAcumaticaPictureBox.Image")));
+            this.DatabaseAcumaticaPictureBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DatabaseAcumaticaPictureBox.InitialImage = null;
+            this.DatabaseAcumaticaPictureBox.Location = new System.Drawing.Point(13, 966);
+            this.DatabaseAcumaticaPictureBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.DatabaseAcumaticaPictureBox.Name = "DatabaseAcumaticaPictureBox";
+            this.DatabaseAcumaticaPictureBox.Size = new System.Drawing.Size(195, 43);
+            this.DatabaseAcumaticaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.DatabaseAcumaticaPictureBox.TabIndex = 1003;
+            this.DatabaseAcumaticaPictureBox.TabStop = false;
+            // 
+            // DatabaseAcumaticaLinkLabel
+            // 
+            this.DatabaseAcumaticaLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.DatabaseAcumaticaLinkLabel.AutoSize = true;
+            this.DatabaseAcumaticaLinkLabel.BackColor = System.Drawing.Color.Transparent;
+            this.DatabaseAcumaticaLinkLabel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.DatabaseAcumaticaLinkLabel.Font = new System.Drawing.Font("Arial", 8.25F);
+            this.DatabaseAcumaticaLinkLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DatabaseAcumaticaLinkLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.DatabaseAcumaticaLinkLabel.Location = new System.Drawing.Point(9, 1010);
+            this.DatabaseAcumaticaLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.DatabaseAcumaticaLinkLabel.Name = "DatabaseAcumaticaLinkLabel";
+            this.DatabaseAcumaticaLinkLabel.Size = new System.Drawing.Size(198, 19);
+            this.DatabaseAcumaticaLinkLabel.TabIndex = 8;
+            this.DatabaseAcumaticaLinkLabel.TabStop = true;
+            this.DatabaseAcumaticaLinkLabel.Text = "http://www.acumatica.com";
+            // 
+            // DatabaseTitleLabel
+            // 
+            this.DatabaseTitleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.DatabaseTitleLabel.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold);
+            this.DatabaseTitleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(33)))));
+            this.DatabaseTitleLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.DatabaseTitleLabel.Location = new System.Drawing.Point(13, 9);
+            this.DatabaseTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.DatabaseTitleLabel.Name = "DatabaseTitleLabel";
+            this.DatabaseTitleLabel.Size = new System.Drawing.Size(958, 48);
+            this.DatabaseTitleLabel.TabIndex = 1;
+            this.DatabaseTitleLabel.Text = "Database Server Settings";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1076, 1038);
+            this.Controls.Add(this.InstancePanel);
             this.Controls.Add(this.RestorePanel);
             this.Controls.Add(this.PackagePanel);
+            this.Controls.Add(this.DatabasePanel);
             this.Controls.Add(this.MenuPanel);
-            this.Controls.Add(this.InstancePanel);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -1923,11 +2036,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.MenuPanel.ResumeLayout(false);
             this.MenuPanel.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MenuAcumaticaPictureBox)).EndInit();
+            this.MenuOptionsPanel.ResumeLayout(false);
+            this.MenuOptionsPanel.PerformLayout();
+            this.DatabaseServerSettingsPanel.ResumeLayout(false);
+            this.DatabaseServerSettingsPanel.PerformLayout();
             this.InstancePanel.ResumeLayout(false);
             this.InstancePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackupRestoreAcumaticaPictureBox)).EndInit();
@@ -1947,6 +2060,9 @@
             this.WebsiteSettingsPanel.PerformLayout();
             this.AppPoolSettingsPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.DatabasePanel.ResumeLayout(false);
+            this.DatabasePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DatabaseAcumaticaPictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2035,7 +2151,6 @@
         private System.Windows.Forms.Button BrowseBackupFileButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox BackupFilePathTextBox;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox DatabaseNameTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label InstanceNameLabel;
@@ -2054,14 +2169,6 @@
         private System.Windows.Forms.RadioButton WindowsAuthRadioButton;
         private System.Windows.Forms.RadioButton OverwriteDatabaseRadioButton;
         private System.Windows.Forms.ListBox DatabaseListBox;
-        private System.Windows.Forms.DataGridViewImageColumn PackageStatus;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MajorVersion;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MinorVersion;
-        private System.Windows.Forms.DataGridViewTextBoxColumn BuildNumber;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsRemote;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsInstalled;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsLocal;
-        private System.Windows.Forms.DataGridViewTextBoxColumn PackageKey;
         private System.Windows.Forms.DataGridViewImageColumn InstanceStatus;
         private System.Windows.Forms.DataGridViewTextBoxColumn InstanceName;
         private System.Windows.Forms.DataGridViewTextBoxColumn Database;
@@ -2074,7 +2181,23 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ServerNameComboBox;
         internal System.Windows.Forms.Button StartSQLBrowserButton;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel MenuOptionsPanel;
+        private System.Windows.Forms.Panel DatabaseServerSettingsPanel;
+        private System.Windows.Forms.CheckBox ShowPreviewCheckBox;
+        private System.Windows.Forms.DataGridViewImageColumn PackageStatus;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MajorVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MinorVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn BuildNumber;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsRemote;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsInstalled;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsLocal;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PackageKey;
+        private System.Windows.Forms.DataGridViewTextBoxColumn VersionString;
+        private System.Windows.Forms.Button ServerSettingsButton;
+        internal System.Windows.Forms.Panel DatabasePanel;
+        private System.Windows.Forms.PictureBox DatabaseAcumaticaPictureBox;
+        private System.Windows.Forms.LinkLabel DatabaseAcumaticaLinkLabel;
+        private System.Windows.Forms.Label DatabaseTitleLabel;
+        internal System.Windows.Forms.Button DatabaseBackButton;
     }
 }

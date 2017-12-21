@@ -4,6 +4,7 @@ using Acumatica.WorkspaceManager.Install;
 using ConfigCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -15,6 +16,10 @@ namespace Acumatica.WorkspaceManager
 {
     public partial class Main
     {
+        #region Variables
+        private bool isPackageSortOrderAscending;
+        #endregion
+
         #region Events
         private void PackageDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -47,6 +52,25 @@ namespace Acumatica.WorkspaceManager
                     }
                 }
             }
+        }
+        
+        private void PackageDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            isPackageSortOrderAscending = !isPackageSortOrderAscending;
+            
+            PackageBindingSource.CurrencyManager.SuspendBinding();
+
+            List<BuildPackage> buildPackages = ((BindingList<BuildPackage>)((BindingSource)PackageDataGridView.DataSource).List).ToList();
+            PackageBindingSource.Clear();
+
+            foreach (BuildPackage buildPackage in isPackageSortOrderAscending ? buildPackages.OrderBy(x => x.VersionString) :
+                                                                                buildPackages.OrderByDescending(x => x.VersionString))
+            {
+                PackageBindingSource.Add(buildPackage);
+            }
+
+            PackageBindingSource.CurrencyManager.ResumeBinding();
+            FilterPackage();
         }
 
         private void PackageVersionMaskedTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -94,26 +118,15 @@ namespace Acumatica.WorkspaceManager
         
         private bool CompareVersionMaskBuildPackage(BuildPackage buildPackage, string filterVersion)
         {
-            const int majorVersionLength = 1;
-            const int minorVersionLength = 2;
-            const int buildNumberLength = 4;
-            const char versionEmptyChar = '0';
-            const char versionPromptChar = '_';
-            const char versionSeparatorChar = '.';
+            string version = buildPackage.FormatVersion(Constants.versionEmptyChar);
 
-            string version = string.Concat(Convert.ToString(buildPackage.MajorVersion, CultureInfo.InvariantCulture).PadLeft(majorVersionLength, versionPromptChar),
-                                           versionSeparatorChar,
-                                           Convert.ToString(buildPackage.MinorVersion, CultureInfo.InvariantCulture).PadLeft(minorVersionLength, versionEmptyChar),
-                                           versionSeparatorChar,
-                                           Convert.ToString(buildPackage.BuildNumber, CultureInfo.InvariantCulture).PadLeft(buildNumberLength, versionEmptyChar));
-            
             for (int i = 0; i < filterVersion.Length && i < version.Length; i++)
             {
                 char charFilter = filterVersion[i];
                 char charVersion = version[i];
 
-                if (charFilter != versionPromptChar &&
-                    charFilter != versionSeparatorChar &&
+                if (charFilter != Constants.versionPromptChar &&
+                    charFilter != Constants.versionSeparatorChar &&
                     charFilter != charVersion)
                 {
                     return false;
@@ -122,7 +135,7 @@ namespace Acumatica.WorkspaceManager
 
             return true;
         }
-
+        
         private void EnablePackageControls(BuildPackage buildPackage)
         {
             bool isBuildPackage = (buildPackage != null);
@@ -174,8 +187,9 @@ namespace Acumatica.WorkspaceManager
                         row.Visible = (buildPackage != null &&
                                        CompareVersionMaskBuildPackage(buildPackage, PackageVersionMaskedTextBox.Text) &&
                                        ((buildPackage.IsLocal && ShowLocalCheckBox.Checked) ||
-                                       (buildPackage.IsRemote && ShowRemoteCheckBox.Checked) ||
-                                       (buildPackage.IsInstalled && ShowInstalledCheckBox.Checked)));
+                                        (buildPackage.IsRemote && ShowRemoteCheckBox.Checked) ||
+                                        (buildPackage.IsInstalled && ShowInstalledCheckBox.Checked)) &&
+                                       (!buildPackage.IsPreview || (buildPackage.IsPreview && ShowPreviewCheckBox.Checked)));
                     }
                 }
 
@@ -265,10 +279,10 @@ namespace Acumatica.WorkspaceManager
 
                         PackageBindingSource.CurrencyManager.SuspendBinding();
                         PackageBindingSource.Clear();
-
-                        foreach (BuildPackage buildPackage in buildPackages)
+                        
+                        foreach (BuildPackage buildPackage in isPackageSortOrderAscending ? buildPackages.OrderBy(x => x.VersionString) : buildPackages.OrderByDescending(x => x.VersionString))
                             PackageBindingSource.Add(buildPackage);
-
+                        
                         PackageBindingSource.CurrencyManager.ResumeBinding();
 
                         FilterPackage();

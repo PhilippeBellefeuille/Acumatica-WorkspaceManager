@@ -5,11 +5,17 @@
         public const string sqlServerBrowserServiceName = "SQL Server Browser";
         public const string MSSQLServerType = "MSSQLSERVER";
         public const string IISAppPoolUser = "IIS APPPOOL";
+        public const string previewVersion = "PREVIEW";
         public const string defaultDBOwner = "dbo";
         public const string connectionString = "data source={0};Initial Catalog={1}; Integrated Security=yes";
         public const string dataReaderSecurity = "db_datareader";
         public const string dataWriterSecurity = "db_datawriter";
         public const string backupSecurity = "db_backupoperator";
+
+        // Characters
+        public const char versionEmptyChar = '0';
+        public const char versionPromptChar = '_';
+        public const char versionSeparatorChar = '.';
 
         // Image list
         public const string errorImage = "error";
@@ -62,7 +68,7 @@
         public const string webConfigFilename = "web.config";
 
         // Other
-        public const string emptyVersionMask = "_.__.____";
+        public const string emptyVersionMask = "__.___.____";
         public const string backupDescription = "Full backup of {0}";
         public const string backupSetName = "{0} Backup";
         public const string snapshotsAppSetting = "SnapshotsFolder";

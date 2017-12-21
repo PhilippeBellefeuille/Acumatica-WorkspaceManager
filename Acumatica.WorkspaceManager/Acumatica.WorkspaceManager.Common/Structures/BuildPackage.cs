@@ -1,4 +1,7 @@
-﻿namespace Acumatica.WorkspaceManager.Common
+﻿using System;
+using System.Globalization;
+
+namespace Acumatica.WorkspaceManager.Common
 {
     public class BuildPackage
     {
@@ -36,6 +39,7 @@
             this.MinorVersion = minorVersion;
             this.BuildNumber = buildNumber;
             this.Key = key;
+            this.VersionString = FormatVersion('0');
 
             this.IsRemote = false;
             this.IsLocal = false;
@@ -46,9 +50,25 @@
         public int BuildNumber { get; }
         public bool IsRemote { get; private set; }
         public bool IsInstalled { get; private set; }
+        public bool IsPreview { get; private set; }
         public bool IsLocal { get; private set; }
 
         public string Key { get; }
+        public string VersionString { get; }
+
+        public string FormatVersion(char paddingChar)
+        {
+            const int majorVersionLength = 2;
+            const int minorVersionLength = 3;
+            const int buildNumberLength = 4;
+
+            string version = string.Concat(Convert.ToString(MajorVersion, CultureInfo.InvariantCulture).PadLeft(majorVersionLength, paddingChar),
+                                           Constants.versionSeparatorChar,
+                                           Convert.ToString(MinorVersion, CultureInfo.InvariantCulture).PadLeft(minorVersionLength, paddingChar),
+                                           Constants.versionSeparatorChar,
+                                           Convert.ToString(BuildNumber, CultureInfo.InvariantCulture).PadLeft(buildNumberLength, paddingChar));
+            return version;
+        }
 
         public void SetIsRemote()
         {
@@ -63,6 +83,11 @@
         public void SetIsLocal(bool isLocal)
         {
             this.IsLocal = isLocal;
+        }
+
+        public void SetIsPreview(bool isPreview)
+        {
+            this.IsPreview = isPreview;
         }
     }
 }

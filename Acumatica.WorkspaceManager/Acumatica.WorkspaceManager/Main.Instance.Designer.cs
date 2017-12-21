@@ -7,10 +7,12 @@ using PX.BulkInsert.Installer;
 using PX.WebConfig;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
@@ -20,6 +22,10 @@ namespace Acumatica.WorkspaceManager
 {
     public partial class Main
     {
+        #region Variables
+        private bool isInstanceSortOrderDescending;
+        #endregion
+
         #region Events
         private void InstanceDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -60,6 +66,25 @@ namespace Acumatica.WorkspaceManager
                     }
                 }
             }
+        }
+
+        private void InstanceDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            isInstanceSortOrderDescending = !isInstanceSortOrderDescending;
+
+            InstanceBindingSource.CurrencyManager.SuspendBinding();
+
+            List<Website> websites = ((BindingList<Website>)((BindingSource)InstanceDataGridView.DataSource).List).ToList();
+            InstanceBindingSource.Clear();
+
+            foreach (Website website in isInstanceSortOrderDescending ? websites.OrderByDescending(x => x.InstanceName) :
+                                                                        websites.OrderBy(x => x.InstanceName))
+            {
+                InstanceBindingSource.Add(website);
+            }
+
+            InstanceBindingSource.CurrencyManager.ResumeBinding();
+            FilterInstances(null);
         }
         #endregion
 
@@ -392,82 +417,92 @@ namespace Acumatica.WorkspaceManager
 
                             if (subKey != null)
                             {
-                                string path = subKey.GetValue(Constants.pathRegistryValue) as string;
-                                string configFile = Path.Combine(path, Constants.webConfigFilename);
-                                string virtualDirectory = subKey.GetValue(Constants.virtualDirectoryRegistryValue) as string;
-                                string websiteName = subKey.GetValue(Constants.webSiteNameRegistryValue) as string;
-                                string websiteType = subKey.GetValue(Constants.typeRegistryValue) as string;
-
-                                ServerManager server = new ServerManager();
-                                SiteCollection sites = server.Sites;
-                                Site site = sites[websiteName];
-                                Microsoft.Web.Administration.Application application = site.Applications[string.Concat(Constants.slash, virtualDirectory)];
-
-                                foreach (Microsoft.Web.Administration.Binding binding in site.Bindings)
+                                try
                                 {
-                                    if (String.Compare(binding.Protocol, Titles.Http, true) == 0)
+                                    string path = subKey.GetValue(Constants.pathRegistryValue) as string;
+                                    string configFile = Path.Combine(path, Constants.webConfigFilename);
+                                    string virtualDirectory = subKey.GetValue(Constants.virtualDirectoryRegistryValue) as string;
+                                    string websiteName = subKey.GetValue(Constants.webSiteNameRegistryValue) as string;
+                                    string websiteType = subKey.GetValue(Constants.typeRegistryValue) as string;
+
+                                    ServerManager server = new ServerManager();
+                                    SiteCollection sites = server.Sites;
+                                    Site site = sites[websiteName];
+                                    String applicationName = string.Concat(Constants.slash, virtualDirectory);
+
+                                    Microsoft.Web.Administration.Application application = site.Applications[applicationName];
+
+                                    foreach (Microsoft.Web.Administration.Binding binding in site.Bindings)
                                     {
-                                        string port = binding.EndPoint.Port.ToString();
-                                        string hostName = binding.Host;
-                                        string ip = binding.EndPoint.Address.ToString();
-
-                                        if (String.Compare(ip, Titles.NullIP, true) == 0)
-                                            ip = "";
-
-                                        StringBuilder url = new StringBuilder("http://");
-
-                                        if (String.IsNullOrEmpty(hostName))
-                                            url.Append("localhost");
-                                        else
-                                            url.Append(hostName);
-
-                                        if (!String.IsNullOrEmpty(port))
+                                        if (String.Compare(binding.Protocol, Titles.Http, true) == 0)
                                         {
-                                            url.Append(":");
-                                            url.Append(port);
-                                        }
+                                            string port = binding.EndPoint.Port.ToString();
+                                            string hostName = binding.Host;
+                                            string ip = binding.EndPoint.Address.ToString();
 
-                                        url.Append("/");
-                                        url.Append(virtualDirectory);
-                                        url.Append("/Main.aspx");
+                                            if (String.Compare(ip, Titles.NullIP, true) == 0)
+                                                ip = "";
 
-                                        if (!File.Exists(configFile))
-                                        {
+                                            StringBuilder url = new StringBuilder("http://");
+
+                                            if (String.IsNullOrEmpty(hostName))
+                                                url.Append("localhost");
+                                            else
+                                                url.Append(hostName);
+
+                                            if (!String.IsNullOrEmpty(port))
+                                            {
+                                                url.Append(":");
+                                                url.Append(port);
+                                            }
+
+                                            url.Append("/");
+                                            url.Append(virtualDirectory);
+                                            url.Append("/Main.aspx");
+
+                                            if (!File.Exists(configFile))
+                                            {
+                                                websites.Add(new Website(subKeyName,
+                                                                         virtualDirectory,
+                                                                         null,
+                                                                         null,
+                                                                         null,
+                                                                         path,
+                                                                         url.ToString(),
+                                                                         null,
+                                                                         websiteType,
+                                                                         websiteName));
+                                                continue;
+                                            }
+
+                                            WebConfiguration webConfiguration = new WebConfiguration(configFile, true);
+                                            DbmsProviderService ServerType = ProviderLocator.GetProviderByPxDataProviderClassName(webConfiguration.DatabaseProvider);
+
+                                            ConnectionDefinition connection = DatabaseProvider.ParseConnectionString(DatabaseProvider.GetProvider(ServerType.name), webConfiguration.ConnectionString);
+                                            DBInfo databaseInfo = DBInfo.DatabaseTest(connection);
+
                                             websites.Add(new Website(subKeyName,
                                                                      virtualDirectory,
-                                                                     null,
-                                                                     null,
-                                                                     null,
+                                                                     string.Concat(connection.Server, Constants.slash, connection.Database),
+                                                                     webConfiguration.Version,
+                                                                     databaseInfo.GetVersion(),
                                                                      path,
                                                                      url.ToString(),
-                                                                     null,
+                                                                     ServerType.name.ToUpperInvariant(),
                                                                      websiteType,
                                                                      websiteName));
-                                            continue;
+
+                                            PXWait.ShowProgress((int)(((float)counter / total) * 100f),
+                                                                string.Format(Messages.scanningInstancesProgress,
+                                                                              Convert.ToString(++counter, CultureInfo.InvariantCulture).PadLeft(totalDigitCount),
+                                                                              Convert.ToString(total, CultureInfo.InvariantCulture)));
                                         }
-
-                                        WebConfiguration webConfiguration = new WebConfiguration(configFile, true);
-                                        DbmsProviderService ServerType = ProviderLocator.GetProviderByPxDataProviderClassName(webConfiguration.DatabaseProvider);
-
-                                        ConnectionDefinition connection = DatabaseProvider.ParseConnectionString(DatabaseProvider.GetProvider(ServerType.name), webConfiguration.ConnectionString);
-                                        DBInfo databaseInfo = DBInfo.DatabaseTest(connection);
-
-                                        websites.Add(new Website(subKeyName,
-                                                                 virtualDirectory,
-                                                                 string.Concat(connection.Server, Constants.slash, connection.Database),
-                                                                 webConfiguration.Version,
-                                                                 databaseInfo.GetVersion(),
-                                                                 path,
-                                                                 url.ToString(),
-                                                                 ServerType.name.ToUpperInvariant(),
-                                                                 websiteType,
-                                                                 websiteName));
-
-                                        PXWait.ShowProgress((int)(((float)counter / total) * 100f),
-                                                            string.Format(Messages.scanningInstancesProgress,
-                                                                          Convert.ToString(++counter, CultureInfo.InvariantCulture).PadLeft(totalDigitCount),
-                                                                          Convert.ToString(total, CultureInfo.InvariantCulture)));
                                     }
+                                }
+                                catch
+                                {
+                                    // Website not found
+                                    ++counter;
                                 }
                             }
                         }
@@ -483,7 +518,7 @@ namespace Acumatica.WorkspaceManager
             return InstanceDataGridView.SelectedRows.Count > 0 &&
                    InstanceDataGridView.SelectedRows[0].Visible ? InstanceDataGridView.SelectedRows[0].DataBoundItem as Website : null;
         }
-        
+
         private void ReloadInstance(string selectedInstance)
         {
             new Thread(new ThreadStart(delegate
@@ -496,10 +531,16 @@ namespace Acumatica.WorkspaceManager
 
                         List<Website> websites = GetInstances();
 
-                        PackageBindingSource.CurrencyManager.SuspendBinding();
+                        InstanceBindingSource.CurrencyManager.SuspendBinding();
                         InstanceBindingSource.Clear();
-                        websites.ForEach(website => InstanceBindingSource.Add(website));
-                        PackageBindingSource.CurrencyManager.ResumeBinding();
+
+                        foreach (Website website in isInstanceSortOrderDescending ? websites.OrderByDescending(x => x.InstanceName) :
+                                                                                    websites.OrderBy(x => x.InstanceName))
+                        {
+                            InstanceBindingSource.Add(website);
+                        }
+
+                        InstanceBindingSource.CurrencyManager.ResumeBinding();
 
                         FilterInstances(selectedInstance);
 
