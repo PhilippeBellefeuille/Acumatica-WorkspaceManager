@@ -27,11 +27,12 @@ namespace Acumatica.WorkspaceManager.Builds
                 if (localBuildPackages.ContainsKey(remoteBuildPackage.Key))
                 {
                     localBuildPackages.Remove(remoteBuildPackage.Key);
+                    
+                    string filePath;
+                    string wizardPath;
 
-                    string filePath = GetPathFromKey(remoteBuildPackage.Key);
-                    string directory = Path.GetDirectoryName(filePath);
-                    string installDirectory = Path.Combine(directory, Constants.filesDirectory);
-                    string wizardPath = Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename);
+                    Utility.GetFileWizardPath(remoteBuildPackage, out filePath, out wizardPath);
+
                     remoteBuildPackage.SetIsLocal(File.Exists(filePath));
                     remoteBuildPackage.SetIsInstalled(File.Exists(wizardPath));
                 }
@@ -53,9 +54,9 @@ namespace Acumatica.WorkspaceManager.Builds
 
         private static IEnumerable<BuildPackage> GetLocalBuildPackages()
         {
-            foreach (var file in GetLocalFiles(GetLocalRepositoryFolder()))
+            foreach (var file in GetLocalFiles(Utility.GetLocalRepositoryFolder()))
             {
-                var key = GetKeyFromPath(file);
+                var key = Utility.GetKeyFromPath(file);
 
                 BuildPackage buildPackage;
 
@@ -124,7 +125,7 @@ namespace Acumatica.WorkspaceManager.Builds
 
                 using (GetObjectResponse response = client.GetObject(request))
                 {
-                    string dest = GetPathFromKey(buildPackage.Key);
+                    string dest = Utility.GetPathFromKey(buildPackage.Key);
 
                     if (!File.Exists(dest))
                     {
@@ -146,21 +147,6 @@ namespace Acumatica.WorkspaceManager.Builds
         {
             if (!buildPackage.IsLocal)
                 throw new Exception(Messages.deletePackageError);
-        }
-
-        public static string GetKeyFromPath(string filePath)
-        {
-            return filePath.Replace(GetLocalRepositoryFolder() + Path.DirectorySeparatorChar, string.Empty).Replace(Path.DirectorySeparatorChar, '/');
-        }
-
-        public static string GetPathFromKey(string key)
-        {
-            return Path.Combine(GetLocalRepositoryFolder(), key.Replace('/', Path.DirectorySeparatorChar));
-        }
-
-        private static string GetLocalRepositoryFolder()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Resources.LocalRepositoryName);
         }
 
         private static AmazonS3Client CreateAnonymousS3Client(S3Uri s3Uri)

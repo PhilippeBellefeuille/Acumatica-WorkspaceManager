@@ -139,10 +139,14 @@ namespace Acumatica.WorkspaceManager
         private void EnablePackageControls(BuildPackage buildPackage)
         {
             bool isBuildPackage = (buildPackage != null);
-            string filePath = (isBuildPackage ? BuildManager.GetPathFromKey(buildPackage.Key) : null);
+            string filePath = null;
+            string wizardPath = null;
+
+            if(isBuildPackage)
+                Utility.GetFileWizardPath(buildPackage, out filePath, out wizardPath);
+
             string directory = (filePath != null ? Path.GetDirectoryName(filePath) : null);
             string installDirectory = (directory != null ? Path.Combine(directory, Constants.filesDirectory) : null);
-            string wizardPath = (installDirectory != null ? Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename) : null);
 
             bool isDirectory = Directory.Exists(directory);
             bool isInstallDirectory = Directory.Exists(installDirectory);

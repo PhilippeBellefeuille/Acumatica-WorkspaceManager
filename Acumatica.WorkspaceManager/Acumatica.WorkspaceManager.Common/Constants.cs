@@ -53,6 +53,8 @@
         public const string portalDirectory = "Portal";
         public const string databaseDirectory = "Database";
         public const string snapshotsDirectory = "Snapshots";
+        public const string localRepositoryName = "AcumaticaBuildManager";
+        public const string installDirectory2018 = "Acumatica ERP";
 
         // Files
         public const string backupFileExtension = ".bak";

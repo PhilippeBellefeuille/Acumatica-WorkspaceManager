@@ -25,7 +25,7 @@ namespace Acumatica.WorkspaceManager.Install
 
         public static void InstallAcumatica(BuildPackage buildPackage, EventHandler callback)
         {
-            string installerPath = BuildManager.GetPathFromKey(buildPackage.Key);          
+            string installerPath = Utility.GetPathFromKey(buildPackage.Key);          
             string installerDirectory = Path.Combine(Path.GetDirectoryName(installerPath), Constants.filesDirectory);
             string installerTempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(installerPath));
             File.Copy(installerPath, installerTempPath, true);
@@ -48,15 +48,17 @@ namespace Acumatica.WorkspaceManager.Install
         
         public static void LaunchAcumaticaWizard(BuildPackage buildPackage)
         {
-            string path = BuildManager.GetPathFromKey(buildPackage.Key);
-            string directory = Path.GetDirectoryName(path);
-            string wizardPath = Path.Combine(directory, Constants.filesDirectory, Constants.dataDirectory, Constants.wizardFilename);
+            string filePath;
+            string wizardPath;
+
+            Utility.GetFileWizardPath(buildPackage, out filePath, out wizardPath);
+
             Process.Start(new ProcessStartInfo(wizardPath));
         }
 
         public static void OpenPackageFolder(BuildPackage buildPackage)
         {
-            string directory = Path.GetDirectoryName(BuildManager.GetPathFromKey(buildPackage.Key));
+            string directory = Path.GetDirectoryName(Utility.GetPathFromKey(buildPackage.Key));
 
             if (Directory.Exists(directory))
             {
@@ -69,7 +71,7 @@ namespace Acumatica.WorkspaceManager.Install
 
         public static void UninstallPackage(BuildPackage buildPackage)
         {
-            string directory = Path.GetDirectoryName(BuildManager.GetPathFromKey(buildPackage.Key));
+            string directory = Path.GetDirectoryName(Utility.GetPathFromKey(buildPackage.Key));
 
             if (Directory.Exists(directory))
             {
@@ -98,7 +100,7 @@ namespace Acumatica.WorkspaceManager.Install
                                                   " MB downloaded"));
             });
 
-            if (File.Exists(BuildManager.GetPathFromKey(buildPackage.Key)))
+            if (File.Exists(Utility.GetPathFromKey(buildPackage.Key)))
             {
                 buildPackage.SetIsLocal(true);
             }
@@ -112,10 +114,10 @@ namespace Acumatica.WorkspaceManager.Install
         {
             InstallManager.InstallAcumatica(buildPackage, (object sender, EventArgs e) =>
             {
-                string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
-                string directory = Path.GetDirectoryName(filePath);
-                string installDirectory = Path.Combine(directory, Constants.filesDirectory);
-                string wizardPath = Path.Combine(installDirectory, Constants.dataDirectory, Constants.wizardFilename);
+                string filePath;
+                string wizardPath;
+
+                Utility.GetFileWizardPath(buildPackage, out filePath, out wizardPath);
 
                 if (File.Exists(wizardPath))
                 {
@@ -131,7 +133,7 @@ namespace Acumatica.WorkspaceManager.Install
 
         public static void RemovePackage(BuildPackage buildPackage)
         {
-            string filePath = BuildManager.GetPathFromKey(buildPackage.Key);
+            string filePath = Utility.GetPathFromKey(buildPackage.Key);
 
             if (File.Exists(filePath))
             {

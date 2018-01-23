@@ -61,15 +61,6 @@ namespace Acumatica.WorkspaceManager.Builds.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AcumaticaBuildManager.
-        /// </summary>
-        internal static string LocalRepositoryName {
-            get {
-                return ResourceManager.GetString("LocalRepositoryName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to AcumaticaERPInstall.msi.
         /// </summary>
         internal static string PackageName {
